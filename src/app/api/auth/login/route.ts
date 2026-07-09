@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { success } from "zod";
 
 export async function POST(req: Request) {
     try {

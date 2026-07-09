@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 
-export async function middleware(request: NextRequest) {
-    console.log("Middleware running:", request.nextUrl.pathname);
+export async function proxy(request: NextRequest) {
 
     const token = request.cookies.get("bb_session")?.value;
 
     const pathname = request.nextUrl.pathname;
 
     const isLoginPage = pathname === "/login";
-    const isDashboardRoute = pathname.startsWith("/dashboard");
+    const isDashboardRoute = pathname.startsWith("/admin");
 
     // Protect dashboard routes
     if (isDashboardRoute && !token) {
@@ -22,10 +21,10 @@ export async function middleware(request: NextRequest) {
             await verifyToken(token);
 
             return NextResponse.redirect(
-                new URL("/dashboard", request.url)
+                new URL("/admin/dashboard", request.url)
             );
         } catch {
-            // Invalid token → continue to login
+
         }
     }
 
@@ -50,18 +49,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/dashboard", "/dashboard/:path*", "/login"],
+    matcher: ["/admin/:path*", "/login"],
 };
-
-// import { NextResponse } from "next/server";
-// import type { NextRequest } from "next/server";
-
-// export function middleware(request: NextRequest) {
-//     console.log("🔥 MIDDLEWARE HIT:", request.nextUrl.pathname);
-
-//     return new NextResponse("Middleware is running");
-// }
-
-// export const config = {
-//     matcher: "/:path*",
-// };

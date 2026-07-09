@@ -96,7 +96,7 @@ export default function LoginPage() {
                 duration: 0.5,
                 ease: "power2.inOut",
                 onComplete: () => {
-                    router.push("/dashboard");
+                    router.push("/admin/dashboard");
                     router.refresh();
                 },
             });
