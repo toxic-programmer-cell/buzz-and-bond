@@ -1,0 +1,44 @@
+'use client'
+
+import { useRef } from "react";
+import { useRevealText } from "@/components/animations/hooks/useRevealText";
+
+export default function AnimatedText() {
+    const containerRef = useRef(null);
+    useRevealText(containerRef);
+
+    return (
+        <div
+            ref={containerRef}
+            className="relative min-h-[350px] h-[75vh] md:h-[90vh] bg-black overflow-hidden flex flex-col justify-center px-6 md:px-12 lg:px-20 select-none"
+            style={{
+                background: "radial-gradient(circle at 10% 90%, rgba(139, 92, 246, 0.12) 0%, rgba(0, 0, 0, 0) 50%), #000000"
+            }}
+        >
+            <div
+                className="space-y-4 md:space-y-2 max-w-7xl w-full mx-auto font-accent text-white"
+                style={{
+                    maskImage: "linear-gradient(to right, #ffffff 40%, rgba(255, 255, 255, 0.25) 100%)",
+                    WebkitMaskImage: "linear-gradient(to right, #ffffff 40%, rgba(255, 255, 255, 0.25) 100%)"
+                }}
+            >
+                {/* Line 1: Staggered left */}
+                <div className="reveal-line text-left pl-[4vw] text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-light tracking-wide leading-tight">
+                    Ranchi's first<span className="italic font-normal text-white/90"> dynamic community</span> Platform
+                </div>
+
+                {/* Line 2: Staggered center-left */}
+                <div className="reveal-line text-left pl-[8vw] md:pl-[10vw] text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-light tracking-wide leading-tight">
+                    fun activities, <span className="italic font-normal text-white/90">unique events,</span>  and vibrant experiences
+                </div>
+
+                {/* Line 3: Staggered center-right */}
+                <div className="reveal-line text-left pl-[12vw] md:pl-[16vw] whitespace-normal md:whitespace-nowrap text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-light tracking-wide leading-tight">
+                    Explore, socialize <span className="italic font-normal text-white/90">and make</span> every moment unforgettable.
+                </div>
+            </div>
+            <div className="absolute w-[100px] h-[100px] bottom-10 left-40 bg-white -translate-x-1/2 rounded-full blur-[90px]"></div>
+            <div className="absolute w-[80px] h-[80px] bottom-40 left-10 bg-orange-200 -translate-x-1/2 rounded-full blur-[90px]"></div>
+        </div>
+    );
+}
