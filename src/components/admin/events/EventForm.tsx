@@ -4,12 +4,19 @@ import { EventInput, EventSchema } from "@/validations/event.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
+import { Event } from "./types";
 
 interface Props {
+    event?: Event
     onClose: () => void;
 }
 
-export default function EventForm({ onClose }: Props) {
+export default function EventForm({ onClose, event }: Props) {
+    const defaultValues = event ? {
+        ...event,
+        eventDate: event.eventDate ? new Date(event.eventDate).toISOString().split('T')[0] : ""
+    } : undefined;
+
     const {
         register,
         handleSubmit,
@@ -17,12 +24,21 @@ export default function EventForm({ onClose }: Props) {
         reset
     } = useForm<EventInput>({
         resolver: zodResolver(EventSchema),
+        defaultValues: defaultValues
     });
 
     async function onSubmit(data: EventInput) {
         try {
-            const res = await fetch("/api/event", {
-                method: "POST",
+            const url = event
+                ? `/api/event/${event.id}`
+                : "/api/event";
+
+            const method = event
+                ? "PATCH"
+                : "POST";
+
+            const res = await fetch(url, {
+                method,
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -47,10 +63,10 @@ export default function EventForm({ onClose }: Props) {
         >
             <div>
                 <h2 className="text-base font-bold text-zinc-900">
-                    Add Event
+                    {event ? "Edit Event" : "Add Event"}
                 </h2>
                 <p className="text-xs text-zinc-500 mt-0.5">
-                    Fill in the details below to create a new event.
+                    {event ? "Modify the details of the event." : "Fill in the details below to create a new event."}
                 </p>
             </div>
 
@@ -208,10 +224,10 @@ export default function EventForm({ onClose }: Props) {
                     {isSubmitting ? (
                         <>
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            <span>Creating...</span>
+                            <span>{event ? "Saving..." : "Creating..."}</span>
                         </>
                     ) : (
-                        <span>Create Event</span>
+                        <span>{event ? "Save Changes" : "Create Event"}</span>
                     )}
                 </button>
             </div>

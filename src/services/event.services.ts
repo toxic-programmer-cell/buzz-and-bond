@@ -15,4 +15,8 @@ export class EventServices {
     delete(id: string) {
         return repository.delete(id)
     }
+
+    update(id: string, data: EventInput) {
+        return repository.update(id, data);
+    }
 }

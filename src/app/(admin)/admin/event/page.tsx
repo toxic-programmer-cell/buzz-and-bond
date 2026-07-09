@@ -43,17 +43,20 @@ export default function EventPage() {
         <>
             <div className="space-y-10">
                 <EventHeader onAdd={() => setOpen(true)} />
-                <EventModal open={open} onClose={() => setOpen(false)}>
+                <EventModal open={open} onClose={() => { setOpen(false); setSelectedEvent(null); }}>
                     <EventForm
+                        key={selectedEvent?.id || "new"}
+                        event={selectedEvent || undefined}
                         onClose={() => {
                             setOpen(false);
+                            setSelectedEvent(null);
                             fetchEvents();
                         }}
                     />
                 </EventModal>
                 <DeleteDialog open={deleteOpen} title={selectedEvent?.title || ""} onCancel={() => setDeleteOpen(false)} onConfirm={deleteEvent} />
 
-                <EventList events={events} onEdit={(event) => { setSelectedEvent(event) }} onDelete={(id) => { const event = events.find((e) => e.id === id); if (!event) return; setSelectedEvent(event); setDeleteOpen(true) }} />
+                <EventList events={events} onEdit={(event) => { setSelectedEvent(event); setOpen(true); }} onDelete={(id) => { const event = events.find((e) => e.id === id); if (!event) return; setSelectedEvent(event); setDeleteOpen(true) }} />
             </div>
         </>
     );

@@ -26,4 +26,16 @@ export class EventRepository {
             }
         })
     }
+
+    async update(id: string, data: EventInput) {
+        return prisma.event.update({
+            where: {
+                id
+            },
+            data: {
+                ...data,
+                eventDate: new Date(data.eventDate)
+            }
+        })
+    }
 }
