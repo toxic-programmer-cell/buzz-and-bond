@@ -10,7 +10,7 @@ export default function AnimatedText() {
     return (
         <div
             ref={containerRef}
-            className="relative min-h-[350px] h-[75vh] md:h-[90vh] bg-black overflow-hidden flex flex-col justify-center px-6 md:px-12 lg:px-20 select-none"
+            className="relative min-h-[350px] h-[75vh] md:h-[90vh] bg-black overflow-hidden flex flex-col justify-center px-4 sm:px-6 md:px-12 lg:px-20 select-none"
             style={{
                 background: "radial-gradient(circle at 10% 90%, rgba(139, 92, 246, 0.12) 0%, rgba(0, 0, 0, 0) 50%), #000000"
             }}
@@ -23,17 +23,17 @@ export default function AnimatedText() {
                 }}
             >
                 {/* Line 1: Staggered left */}
-                <div className="reveal-line text-left pl-[4vw] text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-light tracking-wide leading-tight">
+                <div className="reveal-line text-left pl-[2vw] sm:pl-[4vw] text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-light tracking-wide leading-tight">
                     Ranchi's first<span className="italic font-normal text-white/90"> dynamic community</span> Platform
                 </div>
 
                 {/* Line 2: Staggered center-left */}
-                <div className="reveal-line text-left pl-[8vw] md:pl-[10vw] text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-light tracking-wide leading-tight">
+                <div className="reveal-line text-left pl-[4vw] sm:pl-[7vw] md:pl-[8vw] text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-light tracking-wide leading-tight">
                     fun activities, <span className="italic font-normal text-white/90">unique events,</span>  and vibrant experiences
                 </div>
 
                 {/* Line 3: Staggered center-right */}
-                <div className="reveal-line text-left pl-[12vw] md:pl-[16vw] whitespace-normal md:whitespace-nowrap text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-light tracking-wide leading-tight">
+                <div className="reveal-line text-left pl-[6vw] sm:pl-[10vw] md:pl-[12vw] text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-light tracking-wide leading-tight">
                     Explore, socialize <span className="italic font-normal text-white/90">and make</span> every moment unforgettable.
                 </div>
             </div>

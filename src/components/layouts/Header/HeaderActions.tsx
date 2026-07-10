@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ContactButton from "./ContactButton";
 import MenuButton from "./MenuButton";
+import Link from "next/link";
 
 export default function HeaderActions() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -80,16 +81,22 @@ export default function HeaderActions() {
             <nav className="hidden md:block">
                 <ul className="flex items-center gap-8 font-medium">
                     <li className="relative py-2 group cursor-pointer">
-                        <span className="nav-link inline-block">Home</span>
+                        <Link href="/">
+                            <span className="nav-link inline-block">Home</span>
+                        </Link>
                     </li>
                     <li className="relative py-2 group cursor-pointer">
                         <span className="nav-link inline-block">About</span>
                     </li>
                     <li className="relative py-2 group cursor-pointer">
-                        <span className="nav-link inline-block">Service</span>
+                        <Link href="/events">
+                            <span className="nav-link inline-block">Events</span>
+                        </Link>
                     </li>
                     <li className="relative py-2 group cursor-pointer">
-                        <span className="nav-link inline-block">Blogs</span>
+                        <Link href="/login">
+                            <span className="nav-link inline-block">Admin</span>
+                        </Link>
                     </li>
                 </ul>
             </nav>

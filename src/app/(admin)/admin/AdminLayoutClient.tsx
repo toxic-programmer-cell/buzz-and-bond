@@ -12,6 +12,7 @@ import {
     ChevronDown,
     Shield
 } from "lucide-react";
+import Logo from "@/components/layouts/Header/Logo";
 
 interface AdminLayoutClientProps {
     children: React.ReactNode;
@@ -77,6 +78,11 @@ export default function AdminLayoutClient({ children, admin }: AdminLayoutClient
             href: "/admin/event",
             icon: Calendar,
         },
+        {
+            name: "Gallery",
+            href: "/admin/gallery",
+            icon: Calendar,
+        },
     ];
 
     return (
@@ -86,7 +92,7 @@ export default function AdminLayoutClient({ children, admin }: AdminLayoutClient
                 {/* Logo Area */}
                 <div className="h-16 px-6 border-b border-zinc-200 flex items-center justify-between">
                     <span className="font-accent text-xl italic font-bold tracking-tight text-black flex items-center gap-1.5">
-                        Times Event
+                        <Logo width={100} height={40} />
                         <span className="text-[10px] uppercase font-sans tracking-widest bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded font-normal not-italic">
                             Admin
                         </span>

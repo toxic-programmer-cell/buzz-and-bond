@@ -19,11 +19,11 @@ export function useRevealText(
             lines,
             {
                 opacity: 0,
-                x: 0, // Start 100px to the right
+                x: -40, // Start 40px to the left of its natural position
             },
             {
                 opacity: 1,
-                x: 100,
+                x: 0, // End at its natural position (0) to prevent clipping and preserve layout alignment
                 duration: 1,
                 stagger: 0.2,
                 ease: "power3.out",

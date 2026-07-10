@@ -17,7 +17,7 @@ export default function EventModal({ open, onClose, children }: Props) {
             />
 
             {/* Modal Box */}
-            <div className="relative w-full max-w-2xl rounded-xl bg-white border border-zinc-200 shadow-xl overflow-hidden z-10">
+            <div className="relative w-full max-w-2xl rounded-xl bg-white border border-zinc-200 shadow-xl overflow-hidden z-10 flex flex-col max-h-[calc(100vh-2rem)]">
                 {children}
             </div>
         </div>

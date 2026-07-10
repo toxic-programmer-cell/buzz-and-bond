@@ -7,6 +7,7 @@ import { MagneticButton } from "../ui/Button";
 import img1 from "../../assets/images/service-1-2.png"
 import img2 from "../../assets/images/service-2-1.png"
 import img3 from "../../assets/images/service-3-1.png"
+import Link from "next/link";
 
 export default function Services() {
     const sectionRef = useRef<HTMLDivElement>(null);
@@ -84,8 +85,9 @@ export default function Services() {
                         description={servicesData[2].description}
                     />
                 </div>
-
-                <MagneticButton>More services</MagneticButton>
+                <Link href="/events">
+                    <MagneticButton>More services</MagneticButton>
+                </Link>
             </div>
         </section>
     );

@@ -48,3 +48,33 @@ enum EventStatus{
   PUBLISHED
   CLOSED
 }
+
+model GalleryImage {
+  id          String   @id @default(cuid())
+
+  imageUrl    String
+
+  publicId    String
+
+  title       String?
+
+  description String?
+
+  category    GalleryCategory @default(EVENTS)
+
+  isPublished Boolean @default(true)
+
+  displayOrder Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum GalleryCategory {
+  EVENTS
+  NETWORKING
+  WORKSHOP
+  SPEAKERS
+  COMMUNITY
+  OTHERS
+}

@@ -5,7 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
 import { Event } from "./types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface Props {
     event?: Event
@@ -13,6 +14,9 @@ interface Props {
 }
 
 export default function EventForm({ onClose, event }: Props) {
+
+    const [preview, setPreview] = useState("");
+    const [uploading, setUploading] = useState(false);
 
     const emptyEvent: EventInput = {
         title: "",
@@ -29,11 +33,55 @@ export default function EventForm({ onClose, event }: Props) {
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors, isSubmitting },
         reset
     } = useForm<EventInput>({
         resolver: zodResolver(EventSchema),
     });
+
+    const uploadImage = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+
+        const file = e.target.files?.[0];
+
+        if (!file) return;
+
+        setUploading(true);
+
+        try {
+
+            const formData = new FormData();
+
+            formData.append("file", file);
+
+            const response = await fetch("/api/upload", {
+                method: "POST",
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.log(data.message);
+                return;
+            }
+
+            setPreview(data.url);
+
+            setValue("coverImage", data.url);
+
+        } catch (error) {
+
+            console.error(error);
+
+        } finally {
+
+            setUploading(false);
+
+        }
+    };
 
     useEffect(() => {
         if (event) {
@@ -41,8 +89,11 @@ export default function EventForm({ onClose, event }: Props) {
                 ...event,
                 eventDate: event.eventDate.split("T")[0],
             });
+
+            setPreview(event.coverImage);
         } else {
             reset(emptyEvent);
+            setPreview("")
         }
     }, [event, reset]);
 
@@ -81,9 +132,9 @@ export default function EventForm({ onClose, event }: Props) {
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-5 p-5 md:p-6 text-zinc-900"
+            className="flex flex-col text-zinc-900 min-h-0"
         >
-            <div>
+            <div className="p-5 md:p-6 pb-4 border-b border-zinc-100 flex-shrink-0">
                 <h2 className="text-base font-bold text-zinc-900">
                     {event ? "Edit Event" : "Add Event"}
                 </h2>
@@ -92,111 +143,138 @@ export default function EventForm({ onClose, event }: Props) {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Title */}
-                <div className="md:col-span-2 flex flex-col gap-1">
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Event Title</label>
-                    <input
-                        placeholder="e.g. Ranchi Corporate Product Launch"
-                        {...register("title")}
-                        className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors text-sm h-10"
-                    />
-                    {errors.title && <span className="text-[11px] text-red-600 font-medium">{errors.title.message}</span>}
-                </div>
+            <div className="flex-1 overflow-y-auto p-5 md:p-6 min-h-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Title */}
+                    <div className="md:col-span-2 flex flex-col gap-1">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Event Title</label>
+                        <input
+                            placeholder="e.g. Ranchi Corporate Product Launch"
+                            {...register("title")}
+                            className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors text-sm h-10"
+                        />
+                        {errors.title && <span className="text-[11px] text-red-600 font-medium">{errors.title.message}</span>}
+                    </div>
 
-                {/* Location */}
-                <div className="md:col-span-2 flex flex-col gap-1">
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Location</label>
-                    <input
-                        placeholder="e.g. Radisson Blu, Ranchi"
-                        {...register("location")}
-                        className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors text-sm h-10"
-                    />
-                    {errors.location && <span className="text-[11px] text-red-600 font-medium">{errors.location.message || "Location must be at least 3 characters"}</span>}
-                </div>
+                    {/* Location */}
+                    <div className="md:col-span-2 flex flex-col gap-1">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Location</label>
+                        <input
+                            placeholder="e.g. Radisson Blu, Ranchi"
+                            {...register("location")}
+                            className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors text-sm h-10"
+                        />
+                        {errors.location && <span className="text-[11px] text-red-600 font-medium">{errors.location.message || "Location must be at least 3 characters"}</span>}
+                    </div>
 
-                {/* Cover Image URL */}
-                <div className="md:col-span-2 flex flex-col gap-1">
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Cover Image URL</label>
-                    <input
-                        placeholder="https://example.com/image.jpg"
-                        {...register("coverImage")}
-                        className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors text-sm h-10"
-                    />
-                    {errors.coverImage && <span className="text-[11px] text-red-600 font-medium">{errors.coverImage.message || "Cover Image must be a valid URL"}</span>}
-                </div>
+                    {/* Cover Image URL */}
+                    <div className="col-span-2 space-y-4">
 
-                {/* Event Date */}
-                <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Event Date</label>
-                    <input
-                        type="date"
-                        {...register("eventDate")}
-                        className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 focus:outline-none transition-colors text-sm h-10"
-                    />
-                    {errors.eventDate && <span className="text-[11px] text-red-600 font-medium">{errors.eventDate.message || "Date is required"}</span>}
-                </div>
+                        <label className="flex h-48 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-gray-300 hover:border-black">
 
-                {/* Seats */}
-                <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Total Seats</label>
-                    <input
-                        type="number"
-                        placeholder="100"
-                        {...register("seats", { valueAsNumber: true })}
-                        className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors text-sm h-10"
-                    />
-                    {errors.seats && <span className="text-[11px] text-red-600 font-medium">{errors.seats.message || "Seats must be at least 1"}</span>}
-                </div>
+                            <input
+                                hidden
+                                type="file"
+                                accept="image/*"
+                                onChange={uploadImage}
+                            />
 
-                {/* Start Time */}
-                <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Start Time</label>
-                    <input
-                        type="time"
-                        {...register("startTime")}
-                        className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 focus:outline-none transition-colors text-sm h-10"
-                    />
-                    {errors.startTime && <span className="text-[11px] text-red-600 font-medium">{errors.startTime.message || "Start time is required"}</span>}
-                </div>
+                            {uploading
+                                ? "Uploading..."
+                                : "Click to Upload Cover Image"}
 
-                {/* End Time */}
-                <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">End Time</label>
-                    <input
-                        type="time"
-                        {...register("endTime")}
-                        className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 focus:outline-none transition-colors text-sm h-10"
-                    />
-                    {errors.endTime && <span className="text-[11px] text-red-600 font-medium">{errors.endTime.message || "End time is required"}</span>}
-                </div>
+                        </label>
 
-                {/* Price */}
-                <div className="md:col-span-2 flex flex-col gap-1">
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Ticket Price (₹)</label>
-                    <input
-                        type="number"
-                        placeholder="0 for Free"
-                        {...register("price", { valueAsNumber: true })}
-                        className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors text-sm h-10"
-                    />
-                    {errors.price && <span className="text-[11px] text-red-600 font-medium">{errors.price.message || "Price must be 0 or greater"}</span>}
-                </div>
+                        {preview && (
 
-                {/* Description */}
-                <div className="md:col-span-2 flex flex-col gap-1">
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Description</label>
-                    <textarea
-                        rows={4}
-                        placeholder="Describe the event itinerary, speakers, or highlight details..."
-                        {...register("description")}
-                        className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors text-sm resize-none"
-                    />
-                    {errors.description && <span className="text-[11px] text-red-600 font-medium">{errors.description.message || "Description must be at least 10 characters"}</span>}
+                            <div className="relative h-60 overflow-hidden rounded-xl">
+
+                                <Image
+                                    src={preview}
+                                    alt="Preview"
+                                    fill
+                                    sizes="100vw"
+                                    className="object-cover"
+                                />
+
+                            </div>
+
+                        )}
+
+                    </div>
+
+                    {/* Event Date */}
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Event Date</label>
+                        <input
+                            type="date"
+                            {...register("eventDate")}
+                            className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 focus:outline-none transition-colors text-sm h-10"
+                        />
+                        {errors.eventDate && <span className="text-[11px] text-red-600 font-medium">{errors.eventDate.message || "Date is required"}</span>}
+                    </div>
+
+                    {/* Seats */}
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Total Seats</label>
+                        <input
+                            type="number"
+                            placeholder="100"
+                            {...register("seats", { valueAsNumber: true })}
+                            className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors text-sm h-10"
+                        />
+                        {errors.seats && <span className="text-[11px] text-red-600 font-medium">{errors.seats.message || "Seats must be at least 1"}</span>}
+                    </div>
+
+                    {/* Start Time */}
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Start Time</label>
+                        <input
+                            type="time"
+                            {...register("startTime")}
+                            className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 focus:outline-none transition-colors text-sm h-10"
+                        />
+                        {errors.startTime && <span className="text-[11px] text-red-600 font-medium">{errors.startTime.message || "Start time is required"}</span>}
+                    </div>
+
+                    {/* End Time */}
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">End Time</label>
+                        <input
+                            type="time"
+                            {...register("endTime")}
+                            className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 focus:outline-none transition-colors text-sm h-10"
+                        />
+                        {errors.endTime && <span className="text-[11px] text-red-600 font-medium">{errors.endTime.message || "End time is required"}</span>}
+                    </div>
+
+                    {/* Price */}
+                    <div className="md:col-span-2 flex flex-col gap-1">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Ticket Price (₹)</label>
+                        <input
+                            type="number"
+                            placeholder="0 for Free"
+                            {...register("price", { valueAsNumber: true })}
+                            className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors text-sm h-10"
+                        />
+                        {errors.price && <span className="text-[11px] text-red-600 font-medium">{errors.price.message || "Price must be 0 or greater"}</span>}
+                    </div>
+
+                    {/* Description */}
+                    <div className="md:col-span-2 flex flex-col gap-1">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Description</label>
+                        <textarea
+                            rows={4}
+                            placeholder="Describe the event itinerary, speakers, or highlight details..."
+                            {...register("description")}
+                            className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors text-sm resize-none"
+                        />
+                        {errors.description && <span className="text-[11px] text-red-600 font-medium">{errors.description.message || "Description must be at least 10 characters"}</span>}
+                    </div>
                 </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-4 border-t border-zinc-100">
+            <div className="flex justify-end gap-2 p-5 md:p-6 pt-4 border-t border-zinc-100 bg-zinc-50/50 flex-shrink-0">
                 <button
                     type="button"
                     disabled={isSubmitting}

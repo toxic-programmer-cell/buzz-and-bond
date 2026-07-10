@@ -116,7 +116,7 @@ export default function LoginPage() {
     return (
         <main
             ref={containerRef}
-            className="min-h-screen relative flex flex-col items-center justify-center bg-black overflow-hidden px-4 py-12"
+            className="min-h-screen relative flex flex-col items-center justify-center bg-black overflow-hidden px-4 py-12 pt-28"
         >
             {/* Background & Overlay */}
             <div className="absolute inset-0 z-0 select-none pointer-events-none">

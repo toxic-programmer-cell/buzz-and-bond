@@ -27,7 +27,11 @@ export default function Header({
                 "left-0",
                 "right-0",
                 "z-50",
-                "py-8",
+                "py-5",
+                // "bg-black/80",
+                // "backdrop-blur-md",
+                "border-b",
+                "border-white/5",
                 className
             )}
         >
