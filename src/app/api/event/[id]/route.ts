@@ -1,8 +1,25 @@
+import { prisma } from "@/lib/prisma";
 import { EventServices } from "@/services/event.services";
 import { EventSchema } from "@/validations/event.schema";
 import { NextRequest, NextResponse } from "next/server";
 
 const service = new EventServices();
+
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        const { id } = await params;
+        const event = await prisma.event.findUnique({
+            where: { id }
+        });
+        if (!event) {
+            return NextResponse.json({ message: "Event not found" }, { status: 404 });
+        }
+        return NextResponse.json(event);
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ message: "Failed to fetch event" }, { status: 500 });
+    }
+}
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {

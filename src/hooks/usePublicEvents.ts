@@ -12,13 +12,14 @@ export default function usePublicEvents() {
 
         try {
 
-            const response = await fetch("/api/events/public");
+            const response = await fetch("/api/event/public");
 
             if (!response.ok) {
                 throw new Error("Failed to fetch events");
             }
 
             const data = await response.json();
+            console.log(data)
 
             setEvents(data);
 
