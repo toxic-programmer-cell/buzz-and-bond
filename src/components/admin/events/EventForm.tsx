@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
 import { Event } from "./types";
+import { useEffect } from "react";
 
 interface Props {
     event?: Event
@@ -12,10 +13,18 @@ interface Props {
 }
 
 export default function EventForm({ onClose, event }: Props) {
-    const defaultValues = event ? {
-        ...event,
-        eventDate: event.eventDate ? new Date(event.eventDate).toISOString().split('T')[0] : ""
-    } : undefined;
+
+    const emptyEvent: EventInput = {
+        title: "",
+        description: "",
+        location: "",
+        eventDate: "",
+        startTime: "",
+        endTime: "",
+        coverImage: "",
+        price: 0,
+        seats: 0,
+    };
 
     const {
         register,
@@ -24,8 +33,18 @@ export default function EventForm({ onClose, event }: Props) {
         reset
     } = useForm<EventInput>({
         resolver: zodResolver(EventSchema),
-        defaultValues: defaultValues
     });
+
+    useEffect(() => {
+        if (event) {
+            reset({
+                ...event,
+                eventDate: event.eventDate.split("T")[0],
+            });
+        } else {
+            reset(emptyEvent);
+        }
+    }, [event, reset]);
 
     async function onSubmit(data: EventInput) {
         try {
@@ -50,7 +69,10 @@ export default function EventForm({ onClose, event }: Props) {
                 return;
             }
 
-            reset();
+            if (!event) {
+
+                reset(emptyEvent);
+            }
             onClose();
         } catch (error) {
             console.log(error);

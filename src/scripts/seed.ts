@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 async function main() {
     const existing = await prisma.admin.findUnique({
         where: {
-            email: "admin@buzzandbond.com",
+            email: "admin@example.com",
         }
     })
 
@@ -13,7 +13,7 @@ async function main() {
         return;
     }
 
-    const hashedPassword = await bcrypt.hash("admin@123", 12);
+    const hashedPassword = await bcrypt.hash("example@123", 12);
 
     await prisma.admin.create({
         data: {
