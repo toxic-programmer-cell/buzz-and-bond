@@ -78,3 +78,41 @@ enum GalleryCategory {
   COMMUNITY
   OTHERS
 }
+
+enum PaymentProvider {
+  RAZORPAY
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum PaymentPurpose {
+  EVENT
+  MEMBERSHIP
+}
+
+model Payment {
+  id          String          @id @default(cuid())
+
+  amount      Float
+  quantity    Int             @default(1)
+  currency    String          @default("INR")
+
+  provider    PaymentProvider @default(RAZORPAY)
+  purpose     PaymentPurpose
+
+  orderId     String         @unique
+  paymentId   String?
+  signature   String?
+
+  status      PaymentStatus   @default(PENDING)
+
+  referenceId String
+
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}

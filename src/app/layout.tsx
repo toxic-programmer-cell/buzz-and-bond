@@ -1,25 +1,25 @@
 import type { Metadata } from "next";
-import { Cormorant, Geist, Geist_Mono } from "next/font/google";
+// import { Cormorant, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { generalSans } from "@/lib/font";
 
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
-const cormorant = Cormorant({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
-});
+// const cormorant = Cormorant({
+//   variable: "--font-cormorant",
+//   subsets: ["latin"],
+//   weight: ["300", "400", "500", "600", "700"],
+//   style: ["normal", "italic"],
+// });
 
 export const metadata: Metadata = {
   title: "Times Event",
@@ -34,10 +34,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="de"
-      className={`${generalSans.variable} ${cormorant.variable}`}    >
-      <body>
+    <html lang="de">
+      <body className={`${generalSans.variable} antialiased`}>
         <SmoothScroll>
           {children}
         </SmoothScroll>

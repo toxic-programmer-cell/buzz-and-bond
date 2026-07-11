@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { GalleryImage } from "./types";
+import { GalleryImage } from "./type";
 
 interface Props {
     image: GalleryImage;

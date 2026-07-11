@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { useRevealText } from "../hooks/useRevealText"
+import { useRevealText } from "../hooks/useRevealText";
 
 type Props = {
     lines: string[];

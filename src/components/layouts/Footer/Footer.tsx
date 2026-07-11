@@ -23,7 +23,7 @@ export default function Footer() {
             // Fade in and slide up footer elements in sequence
             gsap.fromTo(
                 footer.querySelectorAll(".footer-item"),
-                { opacity: 0, y: 30 },
+                { opacity: 0, y: 30, },
                 {
                     opacity: 1,
                     y: 0,
@@ -34,7 +34,7 @@ export default function Footer() {
                         trigger: footer,
                         start: "top 92%",
                     },
-                }
+                },
             );
 
             // Stagger letter spring wave for the giant brand watermark text

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Container } from "@/components/ui";
 import { Event } from "@/components/admin/events/types";
 import { Calendar, Clock, MapPin, Ticket, Users, ArrowLeft, CheckCircle } from "lucide-react";
+import usePayment from "@/hooks/usePayment";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -19,6 +20,8 @@ export default function EventDetailPage({ params }: PageProps) {
     const [ticketQuantity, setTicketQuantity] = useState(1);
     const [isBooking, setIsBooking] = useState(false);
     const [bookingSuccess, setBookingSuccess] = useState(false);
+
+    const { pay } = usePayment();
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -39,14 +42,15 @@ export default function EventDetailPage({ params }: PageProps) {
         fetchEvent();
     }, [id]);
 
+    // console.log(event);
+
     const handleBookTickets = () => {
         if (!event || event.seats <= 0) return;
         setIsBooking(true);
-        // Simulate a booking delay
-        setTimeout(() => {
-            setIsBooking(false);
-            setBookingSuccess(true);
-        }, 1500);
+
+        pay("EVENT", event.id, ticketQuantity)
+
+        setIsBooking(false)
     };
 
     if (loading) {

@@ -3,11 +3,12 @@ import {
     headingAlign,
     headingVariants,
 } from "@/config/typography";
+// import type { ReactNode, ElementType } from "react";
 
 type HeadingProps = {
     children: React.ReactNode;
 
-    tag?: keyof JSX.IntrinsicElements;
+    tag?: keyof React.JSX.IntrinsicElements;
 
     variant?: keyof typeof headingVariants;
 

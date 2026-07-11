@@ -11,6 +11,14 @@ export class EventRepository {
         })
     }
 
+    async findById(id: string) {
+        return prisma.event.findUnique({
+            where: {
+                id,
+            }
+        })
+    }
+
     async findAll() {
         return prisma.event.findMany({
             orderBy: {
@@ -39,3 +47,5 @@ export class EventRepository {
         })
     }
 }
+
+export default new EventRepository();
