@@ -7,7 +7,7 @@ import { Container } from "@/components/ui";
 import { Event } from "@/components/admin/events/types";
 import { Calendar, Clock, MapPin, Ticket, Users, ArrowLeft, CheckCircle, X, ChevronLeft, ChevronRight } from "lucide-react";
 import usePayment from "@/hooks/usePayment";
-import Markdown from "@/components/Markdown";
+import { Markdown } from "@/components/Markdown";
 
 interface PageProps {
     params: Promise<{ id: string }>;

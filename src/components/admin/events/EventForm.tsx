@@ -8,8 +8,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useForm, Controller } from "react-hook-form";
 import MarkdownEditor from "@/MarkdownEditor";
-
-import { SubmitHandler } from "react-hook-form";
+import { MarkdownPreview } from "@/components/Markdown";
 
 
 interface Props {
@@ -24,6 +23,7 @@ export default function EventForm({ onClose, event }: Props) {
     const [coverUploading, setCoverUploading] = useState(false);
     const [galleryUploading, setGalleryUploading] = useState(false);
     const [galleryPreview, setGalleryPreview] = useState<string[]>([]);
+    const [markdownTab, setMarkdownTab] = useState<"write" | "preview">("write");
 
     const emptyEvent: EventInput = {
         title: "",
@@ -444,9 +444,37 @@ export default function EventForm({ onClose, event }: Props) {
 
                     {/* Markdown */}
                     <div className="md:col-span-2 space-y-2">
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 mr-2">
                             Event Content
                         </label>
+
+                        <div className="inline-flex rounded-lg border border-zinc-200 overflow-hidden">
+
+                            <button
+                                type="button"
+                                onClick={() => setMarkdownTab("write")}
+                                className={`px-4 py-2 text-sm transition
+                ${markdownTab === "write"
+                                        ? "bg-orange-600 text-white"
+                                        : "bg-white text-zinc-600 hover:bg-zinc-50"
+                                    }`}
+                            >
+                                Write
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => setMarkdownTab("preview")}
+                                className={`px-4 py-2 text-sm transition
+                ${markdownTab === "preview"
+                                        ? "bg-orange-600 text-white"
+                                        : "bg-white text-zinc-600 hover:bg-zinc-50"
+                                    }`}
+                            >
+                                Preview
+                            </button>
+
+                        </div>
 
                         <Controller
                             control={control}
@@ -455,6 +483,7 @@ export default function EventForm({ onClose, event }: Props) {
                                 <MarkdownEditor
                                     value={field.value ?? ""}
                                     onChange={field.onChange}
+                                    preview={markdownTab === "write" ? "edit" : "preview"}
                                 />
                             )}
                         />
