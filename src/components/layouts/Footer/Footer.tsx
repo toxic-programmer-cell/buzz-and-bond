@@ -8,6 +8,7 @@ import { ArrowUp, Mail } from "lucide-react";
 import { Button } from "@/components/ui";
 import Image from "next/image";
 import Logo from "../Header/Logo";
+import Link from "next/link";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -122,8 +123,8 @@ export default function Footer() {
                             Quick Links
                         </h4>
                         <ul className="flex flex-col gap-4 text-sm text-neutral-400">
-                            <li><a href="#" onClick={(e) => e.preventDefault()} className="hover:text-orange-500 transition-colors">Home</a></li>
-                            <li><a href="#" onClick={(e) => e.preventDefault()} className="hover:text-orange-500 transition-colors">About</a></li>
+                            <li><Link href="/" className="hover:text-orange-500 transition-colors">Home</Link></li>
+                            <li><Link href="/About" className="hover:text-orange-500 transition-colors">About</Link></li>
                             <li><a href="#" onClick={(e) => e.preventDefault()} className="hover:text-orange-500 transition-colors">Blog</a></li>
                             <li><a href="#" onClick={(e) => e.preventDefault()} className="hover:text-orange-500 transition-colors">Contact Us</a></li>
                         </ul>

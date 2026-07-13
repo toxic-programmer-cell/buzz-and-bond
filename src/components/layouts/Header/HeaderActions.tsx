@@ -86,7 +86,9 @@ export default function HeaderActions() {
                         </Link>
                     </li>
                     <li className="relative py-2 group cursor-pointer">
-                        <span className="nav-link inline-block">About</span>
+                        <Link href="/about">
+                            <span className="nav-link inline-block">About</span>
+                        </Link>
                     </li>
                     <li className="relative py-2 group cursor-pointer">
                         <Link href="/events">
