@@ -22,7 +22,7 @@ export async function POST(req: Request) {
         const event = await service.create(data)
         return NextResponse.json(event, { status: 201 })
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         return NextResponse.json({ message: "Error while adding event" })
     }
 }

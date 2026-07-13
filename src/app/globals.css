@@ -184,3 +184,46 @@ body {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Premium UI Animations & Backgrounds */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #18181b 25%, #27272a 50%, #18181b 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+@keyframes float-glow {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.04;
+  }
+  50% {
+    transform: translateY(-30px) scale(1.1);
+    opacity: 0.08;
+  }
+}
+
+.animate-float-glow-1 {
+  animation: float-glow 10s ease-in-out infinite;
+}
+
+.animate-float-glow-2 {
+  animation: float-glow 14s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.tech-grid {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+}

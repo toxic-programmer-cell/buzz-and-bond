@@ -2,11 +2,15 @@
 
 import { EventInput, EventSchema } from "@/validations/event.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
 import { Event } from "./types";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useForm, Controller } from "react-hook-form";
+import MarkdownEditor from "@/MarkdownEditor";
+
+import { SubmitHandler } from "react-hook-form";
+
 
 interface Props {
     event?: Event
@@ -16,11 +20,15 @@ interface Props {
 export default function EventForm({ onClose, event }: Props) {
 
     const [preview, setPreview] = useState("");
-    const [uploading, setUploading] = useState(false);
+    // const [uploading, setUploading] = useState(false);
+    const [coverUploading, setCoverUploading] = useState(false);
+    const [galleryUploading, setGalleryUploading] = useState(false);
+    const [galleryPreview, setGalleryPreview] = useState<string[]>([]);
 
     const emptyEvent: EventInput = {
         title: "",
         description: "",
+        content: "",
         location: "",
         eventDate: "",
         startTime: "",
@@ -28,6 +36,7 @@ export default function EventForm({ onClose, event }: Props) {
         coverImage: "",
         price: 0,
         seats: 0,
+        gallery: [],
     };
 
     const {
@@ -35,9 +44,11 @@ export default function EventForm({ onClose, event }: Props) {
         handleSubmit,
         setValue,
         formState: { errors, isSubmitting },
+        control,
         reset
     } = useForm<EventInput>({
         resolver: zodResolver(EventSchema),
+        defaultValues: emptyEvent,
     });
 
     const uploadImage = async (
@@ -48,7 +59,7 @@ export default function EventForm({ onClose, event }: Props) {
 
         if (!file) return;
 
-        setUploading(true);
+        setCoverUploading(true);
 
         try {
 
@@ -71,6 +82,7 @@ export default function EventForm({ onClose, event }: Props) {
             setPreview(data.url);
 
             setValue("coverImage", data.url);
+            e.target.value = "";
 
         } catch (error) {
 
@@ -78,22 +90,121 @@ export default function EventForm({ onClose, event }: Props) {
 
         } finally {
 
-            setUploading(false);
+            setCoverUploading(false);
 
         }
     };
 
+    async function uploadGallery(
+        e: React.ChangeEvent<HTMLInputElement>
+    ) {
+        const files = e.target.files;
+
+        if (!files) return;
+
+        setGalleryUploading(true);
+
+        try {
+
+            // for (const file of Array.from(files)) {
+
+            //     const formData = new FormData();
+
+            //     formData.append("file", file);
+
+            //     const response = await fetch("/api/upload", {
+            //         method: "POST",
+            //         body: formData,
+            //     });
+
+            //     const data = await response.json();
+
+            //     if (response.ok) {
+            //         urls.push(data.url);
+            //     }
+            // }
+
+            const urls = await Promise.all(
+                Array.from(files).map(async (file) => {
+
+                    const formData = new FormData();
+
+                    formData.append("file", file);
+
+                    const response = await fetch("/api/upload", {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message);
+                    }
+
+                    return data.url;
+                })
+            );
+
+            setGalleryPreview(prev => {
+                const updated = [...prev, ...urls];
+
+                setValue("gallery", updated);
+
+                return updated;
+            });
+
+            e.target.value = "";
+
+        } catch (error) {
+            throw new Error("Something went wrong while uploading gallery image.");
+
+        } finally {
+
+            setGalleryUploading(false);
+
+        }
+    }
+
+    const removeGalleryImage = (url: string) => {
+
+        const updated =
+            galleryPreview.filter(
+                image => image !== url
+            );
+
+        setGalleryPreview(updated);
+
+        setValue("gallery", updated);
+
+    };
+
     useEffect(() => {
         if (event) {
+            const galleryUrls =
+                event.gallery.map(image => image.imageUrl);
+
             reset({
-                ...event,
+                title: event.title,
+                description: event.description,
+                content: event.content ?? "",
+                location: event.location,
                 eventDate: event.eventDate.split("T")[0],
+                startTime: event.startTime,
+                endTime: event.endTime,
+                coverImage: event.coverImage,
+                price: event.price,
+                seats: event.seats,
+                gallery: galleryUrls,
             });
 
             setPreview(event.coverImage);
+
+            setGalleryPreview(galleryUrls);
         } else {
             reset(emptyEvent);
             setPreview("")
+            setGalleryPreview([])
         }
     }, [event, reset]);
 
@@ -179,7 +290,7 @@ export default function EventForm({ onClose, event }: Props) {
                                 onChange={uploadImage}
                             />
 
-                            {uploading
+                            {coverUploading
                                 ? "Uploading..."
                                 : "Click to Upload Cover Image"}
 
@@ -202,6 +313,65 @@ export default function EventForm({ onClose, event }: Props) {
                         )}
 
                     </div>
+
+                    {/* Gallery Images */}
+                    <div className="col-span-2 space-y-4">
+
+                        <label className="text-sm font-medium">
+                            Gallery Images
+                        </label>
+
+                        <label className="flex h-32 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed">
+
+                            <input
+                                hidden
+                                multiple
+                                type="file"
+                                accept="image/*"
+                                onChange={uploadGallery}
+                            />
+
+                            {galleryUploading
+                                ? "Uploading Gallery..."
+                                : "Upload Gallery Images"}
+
+                        </label>
+
+                        {galleryPreview.length > 0 && (
+
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+                                {galleryPreview.map((image) => (
+
+                                    <div
+                                        key={image}
+                                        className="relative aspect-square rounded-xl overflow-hidden"
+                                    >
+
+                                        <Image
+                                            fill
+                                            src={image}
+                                            alt=""
+                                            className="object-cover"
+                                        />
+
+                                        <button type="button"
+                                            onClick={() => removeGalleryImage(image)}
+                                            className="absolute top-2 right-2 h-7 w-7 rounded-full bg-black/70 text-white hover:bg-red-600 transition"
+                                        >
+                                            ×
+                                        </button>
+
+                                    </div>
+
+                                ))}
+
+                            </div>
+
+                        )}
+                    </div>
+
+
 
                     {/* Event Date */}
                     <div className="flex flex-col gap-1">
@@ -270,6 +440,24 @@ export default function EventForm({ onClose, event }: Props) {
                             className="w-full bg-white border border-zinc-300 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 rounded-lg p-2.5 text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors text-sm resize-none"
                         />
                         {errors.description && <span className="text-[11px] text-red-600 font-medium">{errors.description.message || "Description must be at least 10 characters"}</span>}
+                    </div>
+
+                    {/* Markdown */}
+                    <div className="md:col-span-2 space-y-2">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+                            Event Content
+                        </label>
+
+                        <Controller
+                            control={control}
+                            name="content"
+                            render={({ field }) => (
+                                <MarkdownEditor
+                                    value={field.value ?? ""}
+                                    onChange={field.onChange}
+                                />
+                            )}
+                        />
                     </div>
                 </div>
             </div>

@@ -3,6 +3,7 @@ export interface Event {
     title: string;
     slug: string;
     description: string;
+    content?: string;
     location: string;
     eventDate: string;
     startTime: string;
@@ -11,4 +12,11 @@ export interface Event {
     price: number;
     seats: number;
     status: "DRAFT" | "PUBLISHED";
+    gallery: EventGallery[];
+}
+
+export interface EventGallery {
+    id: string;
+    imageUrl: string;
+    sortOrder: number;
 }

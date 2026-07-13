@@ -19,4 +19,8 @@ export class EventServices {
     update(id: string, data: EventInput) {
         return repository.update(id, data);
     }
+
+    findById(id: string) {
+        return repository.findById(id);
+    }
 }

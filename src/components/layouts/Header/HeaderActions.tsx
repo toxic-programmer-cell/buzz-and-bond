@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ContactButton from "./ContactButton";
@@ -9,12 +9,25 @@ import Link from "next/link";
 
 export default function HeaderActions() {
     const containerRef = useRef<HTMLDivElement>(null);
+    const [isOpen, setIsOpen] = useState(false);
+
+    // Lock body scroll when mobile menu is open
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [isOpen]);
 
     useGSAP(
         () => {
-            // 1. Entrance animation for the navigation links
+            // 1. Entrance animation for the desktop navigation links
             gsap.fromTo(
-                "li",
+                ".desktop-nav li",
                 {
                     opacity: 0,
                     y: -15,
@@ -29,8 +42,8 @@ export default function HeaderActions() {
                 }
             );
 
-            // 2. Magnetic hover animation for each navigation link
-            const items = gsap.utils.toArray<HTMLElement>("li");
+            // 2. Magnetic hover animation for each desktop navigation link
+            const items = gsap.utils.toArray<HTMLElement>(".desktop-nav li");
             items.forEach((item) => {
                 const link = item.querySelector(".nav-link");
                 if (!link) return;
@@ -76,9 +89,67 @@ export default function HeaderActions() {
         { scope: containerRef }
     );
 
+    useGSAP(
+        () => {
+            const overlay = containerRef.current?.querySelector(".mobile-menu-overlay");
+            const items = containerRef.current?.querySelectorAll(".mobile-nav-item");
+            if (!overlay || !items) return;
+
+            if (isOpen) {
+                // Ensure layout is visible before animating
+                gsap.set(overlay, { display: "flex" });
+
+                // Animate overlay in
+                gsap.fromTo(
+                    overlay,
+                    { opacity: 0 },
+                    {
+                        opacity: 1,
+                        duration: 0.4,
+                        ease: "power2.out",
+                    }
+                );
+
+                // Animate items in
+                gsap.fromTo(
+                    items,
+                    { opacity: 0, y: 20 },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.4,
+                        stagger: 0.08,
+                        ease: "power3.out",
+                        delay: 0.1,
+                    }
+                );
+            } else {
+                // Animate items out
+                gsap.to(items, {
+                    opacity: 0,
+                    y: -10,
+                    duration: 0.25,
+                    ease: "power3.in",
+                });
+
+                // Animate overlay out
+                gsap.to(overlay, {
+                    opacity: 0,
+                    duration: 0.35,
+                    ease: "power2.inOut",
+                    delay: 0.1,
+                    onComplete: () => {
+                        gsap.set(overlay, { display: "none" });
+                    },
+                });
+            }
+        },
+        { dependencies: [isOpen], scope: containerRef }
+    );
+
     return (
         <div ref={containerRef} className="flex items-center gap-8">
-            <nav className="hidden md:block">
+            <nav className="hidden md:block desktop-nav">
                 <ul className="flex items-center gap-8 font-medium">
                     <li className="relative py-2 group cursor-pointer">
                         <Link href="/">
@@ -102,11 +173,61 @@ export default function HeaderActions() {
                     </li>
                 </ul>
             </nav>
-            <div className="hidden lg:block">
+            <div className="hidden md:block">
                 <ContactButton />
             </div>
-            <div className="lg:hidden">
-                <MenuButton />
+            <div className="md:hidden relative z-50">
+                <MenuButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
+            </div>
+
+            {/* Mobile Menu Overlay */}
+            <div
+                className="mobile-menu-overlay fixed inset-0 z-40 flex flex-col items-center justify-start bg-black/95 backdrop-blur-xl md:hidden pt-28"
+                style={{ display: "none" }}
+            >
+                <nav className="bg-black w-full flex flex-col gap-8 text-center">
+                    <ul className="flex flex-col items-center gap-8">
+                        <li className="mobile-nav-item opacity-0">
+                            <Link
+                                href="/"
+                                onClick={() => setIsOpen(false)}
+                                className="text-2xl font-light uppercase tracking-wider text-white/70 hover:text-white transition-colors duration-300"
+                            >
+                                Home
+                            </Link>
+                        </li>
+                        <li className="mobile-nav-item opacity-0">
+                            <Link
+                                href="/about"
+                                onClick={() => setIsOpen(false)}
+                                className="text-2xl uppercase tracking-wider text-white/70 hover:text-white transition-colors duration-300"
+                            >
+                                About
+                            </Link>
+                        </li>
+                        <li className="mobile-nav-item opacity-0">
+                            <Link
+                                href="/events"
+                                onClick={() => setIsOpen(false)}
+                                className="text-3xl font-semibold uppercase tracking-wider text-white/70 hover:text-white transition-colors duration-300"
+                            >
+                                Events
+                            </Link>
+                        </li>
+                        <li className="mobile-nav-item opacity-0">
+                            <Link
+                                href="/login"
+                                onClick={() => setIsOpen(false)}
+                                className="text-3xl font-semibold uppercase tracking-wider text-white/70 hover:text-white transition-colors duration-300"
+                            >
+                                Admin
+                            </Link>
+                        </li>
+                    </ul>
+                    <div className="mobile-nav-item opacity-0 mt-4">
+                        <ContactButton onClick={() => setIsOpen(false)} />
+                    </div>
+                </nav>
             </div>
         </div>
     );

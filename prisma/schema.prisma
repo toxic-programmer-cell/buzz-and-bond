@@ -31,7 +31,7 @@ model Event {
   id String @id @default(cuid())
   title String
   description String
-  content String @db.Text
+  content String? @db.Text
   location String
   eventDate DateTime
   startTime String
@@ -46,8 +46,8 @@ model Event {
 }
 
 model EventGallery{
-  id String @default(cuid())
-  
+  id String @id @default(cuid())
+
   eventId String
 
   imageUrl String
@@ -56,12 +56,7 @@ model EventGallery{
 
   createdAt DateTime @default(now())
 
-  event Event
-    @relation(
-      fields: [eventId],
-      references: [id],
-      onDelete: Cascade
-    )
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 enum EventStatus{

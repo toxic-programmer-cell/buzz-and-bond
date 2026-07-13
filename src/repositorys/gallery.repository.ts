@@ -41,4 +41,29 @@ export class GalleryRepository {
             },
         });
     }
+
+    async findPaginated(page: number, limit: number) {
+
+        const skip = (page - 1) * limit;
+
+        const [gallery, total] = await prisma.$transaction([
+            prisma.galleryImage.findMany({
+                skip,
+                take: limit,
+                orderBy: {
+                    createdAt: "desc",
+                },
+            }),
+
+            prisma.galleryImage.count(),
+        ]);
+
+        return {
+            gallery,
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+        };
+    }
 }
