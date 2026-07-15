@@ -8,84 +8,105 @@ export default function usePayment() {
         purpose: "EVENT" | "MEMBERSHIP",
         referenceId: string,
         ticketQuantity?: number
-    ) {
+    ): Promise<boolean> {
 
-        const loaded = await loadRazorpay();
+        return new Promise<boolean>(async (resolve, reject) => {
+            try {
+                const loaded = await loadRazorpay();
 
-        if (!loaded) {
-            throw new Error("Unable to load Razorpay.");
-        }
+                if (!loaded) {
+                    throw new Error("Unable to load Razorpay.");
+                }
 
-        const response = await fetch("/api/payment", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                purpose,
-                referenceId,
-                quantity: ticketQuantity,
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error("Unable to create payment.");
-        }
-
-        const data = await response.json();
-
-        // console.log(data.order);
-
-        const options = {
-            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-
-            amount: data.order.amount,
-
-            currency: data.order.currency,
-
-            name: "Buzz & Bond",
-
-            description:
-                purpose === "EVENT"
-                    ? "Event Booking"
-                    : "Membership Purchase",
-
-            order_id: data.order.id,
-
-            handler: async (response: {
-                razorpay_order_id: string;
-                razorpay_payment_id: string;
-                razorpay_signature: string;
-            }) => {
-
-                const verify = await fetch("/api/payment/verify", {
+                const response = await fetch("/api/payment", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(response),
+                    body: JSON.stringify({
+                        purpose,
+                        referenceId,
+                        quantity: ticketQuantity,
+                    }),
                 });
 
-                if (!verify.ok) {
-                    alert("Payment verification failed.");
-                    return;
+                if (!response.ok) {
+                    throw new Error("Unable to create payment.");
                 }
 
-                const result = await verify.json();
+                const data = await response.json();
 
-                console.log(result);
+                // console.log(data.order);
 
-                alert("Payment Successful 🎉");
-            },
+                const options = {
+                    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
 
-            theme: {
-                color: "#F97316",
-            },
-        };
+                    amount: data.order.amount,
 
-        const razorpay = new window.Razorpay(options);
+                    currency: data.order.currency,
 
-        razorpay.open();
+                    name: "Buzz & Bond",
+
+                    description:
+                        purpose === "EVENT"
+                            ? "Event Booking"
+                            : "Membership Purchase",
+
+                    order_id: data.order.id,
+
+                    handler: async (response: {
+                        razorpay_order_id: string;
+                        razorpay_payment_id: string;
+                        razorpay_signature: string;
+                    }) => {
+
+                        try {
+                            const verify = await fetch("/api/payment/verify", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(response),
+                            });
+
+                            if (!verify.ok) {
+                                alert("Payment verification failed.");
+                                resolve(false)
+                                return;
+                            }
+
+                            const result = await verify.json();
+
+                            console.log(result);
+
+                            alert("Payment Successful 🎉");
+                            resolve(true)
+                        } catch (error) {
+                            console.log("Varifaction failed", error);
+                            resolve(false)
+                        }
+                    },
+                    modal: {
+                        ondismiss: () => {
+                            resolve(false)
+                        }
+                    },
+
+                    theme: {
+                        color: "#F97316",
+                    },
+                };
+
+                const razorpay = new window.Razorpay(options);
+
+                razorpay.open();
+            } catch (error) {
+                console.log("Payment initilization failed", error);
+                reject(error)
+            }
+        })
+
+
 
     }
 

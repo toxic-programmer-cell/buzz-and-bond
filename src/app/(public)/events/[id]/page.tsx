@@ -46,13 +46,26 @@ export default function EventDetailPage({ params }: PageProps) {
         fetchEvent();
     }, [id]);
 
-    const handleBookTickets = () => {
+    const handleBookTickets = async () => {
         if (!event || event.seats <= 0) return;
         setIsBooking(true);
 
-        pay("EVENT", event.id, ticketQuantity)
+        try {
+            const success = await pay("EVENT", event.id, ticketQuantity)
 
-        setIsBooking(false)
+            if (success) {
+                setBookingSuccess(true)
+
+                // UI update the available seat
+                setEvent((prev) => prev ? { ...prev, seats: prev.seats - ticketQuantity } : null)
+            }
+        } catch (error) {
+            console.error("Checkout execution error", error)
+            alert("Could not proccess booking, please try again")
+        }
+        finally {
+            setIsBooking(false)
+        }
     };
 
     if (loading) {

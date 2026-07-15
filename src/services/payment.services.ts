@@ -11,6 +11,7 @@ import {
 import { PaymentVerifyInput, PaymentVerifySchema } from "@/validations/paymentVerify.schema";
 import { verifySignature } from "@/lib/verifySignature";
 import eventRepository from "@/repositorys/event.repository";
+import { prisma } from "@/lib/prisma";
 
 class PaymentService {
     async create(data: PaymentInput) {
@@ -77,12 +78,65 @@ class PaymentService {
             throw new Error("Invalid payment signature");
         }
 
-        return repository.markPaid(
-            payment.id,
-            validated.razorpay_payment_id,
-            validated.razorpay_signature
-        );
+        // return repository.markPaid(
+        //     payment.id,
+        //     validated.razorpay_payment_id,
+        //     validated.razorpay_signature
+        // );
+
+        return prisma.$transaction(async (tx) => {
+            // const paymentUpdate = await repository.markPaid(
+            //     payment.id,
+            //     validated.razorpay_payment_id,
+            //     validated.razorpay_signature
+            // )
+
+            const paymentUpdate = await tx.payment.update({
+                where: {
+                    id: payment.id,
+                },
+                data: {
+                    paymentId: validated.razorpay_payment_id,
+                    signature: validated.razorpay_signature,
+                    status: "PAID",
+                },
+            })
+
+            if (!paymentUpdate) {
+                throw new Error("Payment update failed")
+            }
+
+            // Here write logic to update the available seat
+            if (payment.purpose === "EVENT") {
+                const event = await tx.event.findUnique({
+                    where: { id: payment.referenceId }
+                })
+
+                if (!event) {
+                    throw new Error("Event not found")
+                }
+
+                if (event.seats < payment.quantity) {
+                    throw new Error("Not enough seats available")
+                }
+
+                await tx.event.update({
+                    where: {
+                        id: payment.referenceId
+                    },
+                    data: {
+                        seats: {
+                            decrement: payment.quantity,
+                        }
+                    }
+                })
+            }
+
+            return paymentUpdate;
+        })
     }
+
+
 
     findByOrderId(orderId: string) {
         return repository.findByOrderId(orderId);

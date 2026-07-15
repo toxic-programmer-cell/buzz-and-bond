@@ -4,9 +4,6 @@ import paymentService from "@/services/payment.services";
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-
-        // console.log("API Body:", body);
-
         const payment = await paymentService.create(body);
 
         return NextResponse.json(payment, {
@@ -14,17 +11,6 @@ export async function POST(request: NextRequest) {
         });
 
     } catch (error) {
-
-        // console.error(error);
-
-        // return NextResponse.json(
-        //     {
-        //         message: "Unable to create payment.",
-        //     },
-        //     {
-        //         status: 500,
-        //     }
-        // );
 
         console.error("Payment API Error:", error);
 
