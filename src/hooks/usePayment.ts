@@ -36,7 +36,6 @@ export default function usePayment() {
 
         // console.log(data.order);
 
-        // We'll open Razorpay next.
         const options = {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
 

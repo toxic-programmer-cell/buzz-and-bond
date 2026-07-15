@@ -32,12 +32,13 @@ export default function Header({
                 // "backdrop-blur-md",
                 "border-b",
                 "border-white/5",
+                "backdrop-blur-sm",
                 className
             )}
         >
             <Container>
-                <div className="flex items-center justify-between">
-                    <Logo width={170} height={40} className="w-[130px] md:w-[170px] h-auto object-contain" />
+                <div className="flex items-center justify-between ">
+                    <Logo width={170} height={40} className="h-auto object-contain" />
 
                     <HeaderActions />
                 </div>
