@@ -185,7 +185,7 @@ export default function HeaderActions() {
                 className="mobile-menu-overlay fixed inset-0 z-40 flex flex-col items-center justify-start bg-black/95 backdrop-blur-xl md:hidden pt-28"
                 style={{ display: "none" }}
             >
-                <nav className="bg-black w-full flex flex-col gap-8 text-center">
+                <nav className="bg-black w-full flex flex-col gap-8 text-center py-3">
                     <ul className="flex flex-col items-center gap-8">
                         <li className="mobile-nav-item opacity-0">
                             <Link
@@ -209,7 +209,7 @@ export default function HeaderActions() {
                             <Link
                                 href="/events"
                                 onClick={() => setIsOpen(false)}
-                                className="text-3xl font-semibold uppercase tracking-wider text-white/70 hover:text-white transition-colors duration-300"
+                                className="text-2xl uppercase tracking-wider text-white/70 hover:text-white transition-colors duration-300"
                             >
                                 Events
                             </Link>
@@ -218,7 +218,7 @@ export default function HeaderActions() {
                             <Link
                                 href="/login"
                                 onClick={() => setIsOpen(false)}
-                                className="text-3xl font-semibold uppercase tracking-wider text-white/70 hover:text-white transition-colors duration-300"
+                                className="text-2xl uppercase tracking-wider text-white/70 hover:text-white transition-colors duration-300"
                             >
                                 Admin
                             </Link>

@@ -22,7 +22,7 @@ export default function AboutPage() {
             <AboutStory />
 
             {/* 3. Stats Section */}
-            <AboutStats />
+            {/* <AboutStats /> */}
 
             {/* 4. Animated Gallery Section */}
             <AnimatedGallery />
@@ -49,8 +49,11 @@ export default function AboutPage() {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link href="/events">
                             <Button variant="primary" className="rounded-full px-8 py-6 flex items-center gap-2 group text-sm font-semibold">
-                                Browse Upcoming Events
-                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                <span className="flex items-center gap-2">
+
+                                    Browse Upcoming Events
+                                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                </span>
                             </Button>
                         </Link>
 

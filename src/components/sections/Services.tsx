@@ -27,18 +27,18 @@ export default function Services() {
     const servicesData = [
         {
             img: img1,
-            title: "Brand Strategy & Positioning",
-            description: "We define your voice, position your brand, and design systems that stand out in crowded digital markets.",
+            title: "Community Circles",
+            description: "Where strangers become friends and creativity finds its voice.",
         },
         {
             img: img2,
-            title: "Immersive Web & Creative Engineering",
-            description: "We build fast, pixel-perfect websites and creative digital experiences using modern stacks and rich interactions.",
+            title: "College & Café Collaborations",
+            description: "We collaborate with colleges and cafés to bring artistic, fun, and youth-driven events to life.",
         },
         {
             img: img3,
-            title: "Performance & Organic Growth",
-            description: "We scale brands through structured growth campaigns, custom search optimization, and data-backed analytics.",
+            title: "Theme Parties",
+            description: "We curate and organize theme-based parties across Ranchi — perfect for cafés, colleges, or private gatherings.",
         },
     ];
 

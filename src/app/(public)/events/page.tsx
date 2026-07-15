@@ -14,7 +14,7 @@ export default function EventsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [priceFilter, setPriceFilter] = useState("all");
 
-    console.log(events)
+    // console.log(events)
 
     // Filter events
     const filteredEvents = events.filter((event) => {

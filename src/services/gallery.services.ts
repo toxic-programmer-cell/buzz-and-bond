@@ -22,6 +22,10 @@ export class GalleryService {
         return repository.update(id, data);
     }
 
+    findPaginated(page: number, limit: number) {
+        return repository.findPaginated(page, limit);
+    }
+
     async delete(id: string) {
         const image = await repository.findById(id);
 

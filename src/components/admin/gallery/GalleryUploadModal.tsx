@@ -23,7 +23,7 @@ export default function GalleryUploadModal({
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
 
-            <div className="relative w-full max-w-4xl rounded-3xl bg-white shadow-2xl">
+            <div data-lenis-prevent className="relative w-full max-w-4xl max-h-[80vh] overflow-y-auto rounded-3xl bg-white shadow-2xl">
 
                 {children}
 

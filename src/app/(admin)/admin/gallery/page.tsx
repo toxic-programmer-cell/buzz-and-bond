@@ -15,7 +15,7 @@ import DeleteDialog from "@/components/admin/gallery/DeleteDialog";
 
 export default function GalleryPage() {
 
-    const { images, loading, fetchGallery } = useGallery();
+    const { images, loading, fetchGallery, page, totalPages, setPage } = useGallery();
     const [open, setOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -57,6 +57,9 @@ export default function GalleryPage() {
             <GalleryGrid
                 images={images}
                 onDelete={handleDeleteClick}
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
             />
             <GalleryUploadModal
                 open={open}
@@ -65,7 +68,8 @@ export default function GalleryPage() {
                 <GalleryForm
                     onSuccess={() => {
                         setOpen(false);
-                        fetchGallery();
+                        setPage(1);
+                        fetchGallery(1);
                     }}
                 />
             </GalleryUploadModal>

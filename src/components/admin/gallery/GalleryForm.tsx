@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 
 interface Props {
     onSuccess: () => void;
@@ -14,6 +15,12 @@ export default function GalleryForm({
     const [files, setFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const [uploading, setUploading] = useState(false);
+
+    function removeFile(indexToRemove: number) {
+        URL.revokeObjectURL(previews[indexToRemove]);
+        setFiles((prev) => prev.filter((_, index) => index !== indexToRemove));
+        setPreviews((prev) => prev.filter((_, index) => index !== indexToRemove));
+    }
 
     function handleFiles(
         e: React.ChangeEvent<HTMLInputElement>
@@ -56,12 +63,11 @@ export default function GalleryForm({
                         body: formData,
                     });
 
-                    if (!uploadRes.ok) {
-                        throw new Error(`Failed to upload ${file.name}`);
-                    }
-
                     const uploadData = await uploadRes.json();
 
+                    if (!uploadRes.ok) {
+                        throw new Error(uploadData.message ?? `Failed to upload ${file.name}`);
+                    }
                     // Save to database
                     const galleryRes = await fetch("/api/gallery", {
                         method: "POST",
@@ -123,7 +129,7 @@ export default function GalleryForm({
                     {previews.map((preview, index) => (
                         <div
                             key={index}
-                            className="relative aspect-square overflow-hidden rounded-xl border"
+                            className="relative aspect-square overflow-hidden rounded-xl border group"
                         >
                             <Image
                                 src={preview}
@@ -132,6 +138,14 @@ export default function GalleryForm({
                                 sizes="200px"
                                 className="object-cover"
                             />
+                            <button
+                                type="button"
+                                onClick={() => removeFile(index)}
+                                className="absolute top-2 right-2 z-10 p-1.5 bg-black/60 hover:bg-red-600 border border-white/10 hover:border-red-500 text-white rounded-full transition-all scale-90 hover:scale-100 cursor-pointer"
+                                aria-label="Remove image"
+                            >
+                                <X className="w-3.5 h-3.5" />
+                            </button>
                         </div>
                     ))}
                 </div>

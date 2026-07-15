@@ -242,6 +242,7 @@ export default function EventForm({ onClose, event }: Props) {
     }
     return (
         <form
+            data-lenis-prevent
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col text-zinc-900 min-h-0"
         >

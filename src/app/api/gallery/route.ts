@@ -4,9 +4,18 @@ import { GallerySchema } from "@/validations/gallery.schema";
 
 const service = new GalleryService();
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
-        const gallery = await service.findAll();
+        const searchParams = request.nextUrl.searchParams;
+
+        const page =
+            Number(searchParams.get("page") ?? "1");
+
+        const limit =
+            Number(searchParams.get("limit") ?? "12");
+
+        const gallery =
+            await service.findPaginated(page, limit);
 
         return NextResponse.json(gallery);
 

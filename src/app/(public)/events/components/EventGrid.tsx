@@ -114,7 +114,7 @@ export default function EventGrid({ events = [], loading = false }: EventGridPro
             {/* Horizontal Scroll Area */}
             <section
                 ref={scrollContainerRef}
-                className="flex flex-wrap gap-6 overflow-hidden no-scrollbar pb-6 w-full scroll-smooth snap-x snap-mandatory"
+                className="flex flex-wrap justify-center gap-6 overflow-hidden no-scrollbar pb-6 w-full scroll-smooth snap-x snap-mandatory"
             >
                 {events.map((event) => (
                     <div key={event.id} className="w-[280px] sm:w-[320px] shrink-0 snap-start">

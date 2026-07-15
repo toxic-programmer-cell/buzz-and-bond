@@ -6,6 +6,21 @@
   --font-accent: var(--font-cormorant);
 }
 
+/* Firefox */
+.your-element {
+  scrollbar-width: none;
+}
+
+/* Chrome, Safari, Edge */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Internet Explorer */
+.your-element {
+  -ms-overflow-style: none;
+}
+
 body {
   font-family: var(--font-primary);
 }
@@ -165,6 +180,7 @@ body {
     opacity: 0;
     transform: translateY(-6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -179,10 +195,13 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 /* Premium UI Animations & Backgrounds */
@@ -190,6 +209,7 @@ body {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -202,10 +222,13 @@ body {
 }
 
 @keyframes float-glow {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px) scale(1);
     opacity: 0.04;
   }
+
   50% {
     transform: translateY(-30px) scale(1.1);
     opacity: 0.08;
@@ -222,7 +245,7 @@ body {
 }
 
 .tech-grid {
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 4rem 4rem;
