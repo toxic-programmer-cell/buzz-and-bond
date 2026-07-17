@@ -15,7 +15,7 @@ export default function EventList({ events, onEdit, onDelete }: Props) {
                 <div className="p-3 bg-zinc-50 border border-zinc-200 rounded-lg text-zinc-400">
                     <Calendar className="w-6 h-6" />
                 </div>
-                
+
                 <h2 className="text-sm font-bold text-zinc-900 mt-3">
                     No Events Found
                 </h2>

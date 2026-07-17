@@ -1,3 +1,4 @@
+import { AlertTriangle } from "lucide-react";
 
 interface Props {
     open: boolean;
@@ -10,37 +11,44 @@ export default function DeleteDialog({ open, title, onCancel, onConfirm }: Props
     if (!open) return null;
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Overlay */}
+            {/* Overlay with Backdrop Blur */}
             <div
                 onClick={onCancel}
-                className="absolute inset-0 bg-zinc-950/40 backdrop-blur-[2px] transition-opacity"
+                className="absolute inset-0 bg-zinc-950/45 backdrop-blur-xs transition-opacity duration-300"
             />
 
             {/* Dialog Box */}
-            <div className="relative w-full max-w-md rounded-xl bg-white border border-zinc-200 p-5 shadow-xl z-10 text-zinc-900">
-                <h2 className="text-base font-bold text-zinc-900">
-                    Delete Event
-                </h2>
+            <div className="relative w-full max-w-md rounded-[28px] bg-white border border-zinc-200/60 p-6 shadow-2xl z-10 text-zinc-900 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="flex items-center gap-3.5 pb-4 border-b border-zinc-100">
+                    <div className="p-2.5 rounded-xl bg-red-50 border border-red-100 text-red-500">
+                        <AlertTriangle className="w-5 h-5" />
+                    </div>
+                    <h2 className="text-base font-bold text-zinc-950">
+                        Delete Event
+                    </h2>
+                </div>
 
-                <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
-                    Are you sure you want to delete the event <span className="text-zinc-900 font-semibold">"{title}"</span>? This action cannot be undone.
+                <p className="mt-4 text-xs font-medium text-zinc-500 leading-relaxed">
+                    Are you sure you want to delete the event <span className="text-zinc-950 font-bold">"{title}"</span>? This action is permanent and cannot be undone.
                 </p>
 
-                <div className="mt-5 flex justify-end gap-2">
+                <div className="mt-6 flex justify-end gap-2">
                     <button
                         onClick={onCancel}
                         className="
-                            rounded-lg
+                            rounded-xl
                             border
                             border-zinc-200
                             bg-white
                             hover:bg-zinc-50
-                            px-3.5
-                            py-1.5
+                            px-4
+                            py-2
                             text-xs
-                            font-semibold
+                            font-bold
                             text-zinc-700
-                            transition-colors
+                            transition-all
+                            shadow-2-xs
+                            active:translate-y-[1px]
                             cursor-pointer
                         "
                     >
@@ -50,16 +58,18 @@ export default function DeleteDialog({ open, title, onCancel, onConfirm }: Props
                     <button
                         onClick={onConfirm}
                         className="
-                            rounded-lg
+                            rounded-xl
                             bg-red-600
                             hover:bg-red-700
-                            px-3.5
-                            py-1.5
+                            px-4
+                            py-2
                             text-xs
-                            font-semibold
+                            font-bold
                             text-white
-                            shadow-xs
-                            transition-colors
+                            shadow-md
+                            shadow-red-500/10
+                            transition-all
+                            active:translate-y-[1px]
                             cursor-pointer
                         "
                     >

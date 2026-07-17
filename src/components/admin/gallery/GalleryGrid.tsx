@@ -1,8 +1,10 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Image as ImageIcon } from "lucide-react";
 import GalleryCard from "./GalleryCard";
 import { GalleryImage } from "./type";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 interface Props {
     images: GalleryImage[];
@@ -20,35 +22,56 @@ export default function GalleryGrid({
     onPageChange,
 }: Props) {
 
+    // Stagger gallery cards entrance
+    useGSAP(() => {
+        if (images.length > 0) {
+            gsap.fromTo(".gallery-grid-item",
+                { opacity: 0, y: 15, scale: 0.97 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.45, stagger: 0.05, ease: "power2.out" }
+            );
+        }
+    }, [images, page]);
+
     if (!images.length) {
         return (
-            <div className="rounded-2xl border border-dashed p-20 text-center">
-                No Images Found
+            <div className="rounded-[24px] border border-dashed border-zinc-200 bg-white p-16 text-center flex flex-col items-center justify-center shadow-xs">
+                <div className="p-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-400">
+                    <ImageIcon className="w-6 h-6" />
+                </div>
+
+                <h2 className="text-sm font-bold text-zinc-900 mt-3">
+                    No Images Found
+                </h2>
+
+                <p className="mt-1 text-xs text-zinc-500 max-w-xs mx-auto">
+                    Click "Upload Images" to add photos to your community gallery.
+                </p>
             </div>
         );
     }
 
     return (
         <div className="space-y-8">
-            <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
                 {images.map((image) => (
-                    <GalleryCard
-                        key={image.id}
-                        image={image}
-                        onDelete={onDelete}
-                    />
+                    <div key={image.id} className="gallery-grid-item">
+                        <GalleryCard
+                            image={image}
+                            onDelete={onDelete}
+                        />
+                    </div>
                 ))}
             </div>
 
             {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-8">
+                <div className="flex items-center justify-center gap-1.5 mt-8 select-none">
                     <button
                         disabled={page === 1}
                         onClick={() => onPageChange(page - 1)}
-                        className="p-2 rounded-lg border bg-white hover:bg-neutral-50 disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed cursor-pointer transition"
+                        className="p-2.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed cursor-pointer transition shadow-2-xs active:translate-y-[1px]"
                         aria-label="Previous Page"
                     >
-                        <ChevronLeft className="w-4 h-4 text-neutral-600" />
+                        <ChevronLeft className="w-4 h-4 text-zinc-600" />
                     </button>
 
                     <div className="flex items-center gap-1">
@@ -59,11 +82,10 @@ export default function GalleryGrid({
                                 <button
                                     key={pageNum}
                                     onClick={() => onPageChange(pageNum)}
-                                    className={`w-9 h-9 rounded-lg text-sm font-semibold cursor-pointer transition ${
-                                        isActive
-                                            ? "bg-black text-white"
-                                            : "border bg-white hover:bg-neutral-50 text-neutral-600"
-                                    }`}
+                                    className={`w-9 h-9 rounded-xl text-xs font-bold cursor-pointer transition active:translate-y-[1px] ${isActive
+                                            ? "bg-orange-500 border border-orange-500 text-white shadow-sm"
+                                            : "border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600"
+                                        }`}
                                 >
                                     {pageNum}
                                 </button>
@@ -74,10 +96,10 @@ export default function GalleryGrid({
                     <button
                         disabled={page === totalPages}
                         onClick={() => onPageChange(page + 1)}
-                        className="p-2 rounded-lg border bg-white hover:bg-neutral-50 disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed cursor-pointer transition"
+                        className="p-2.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed cursor-pointer transition shadow-2-xs active:translate-y-[1px]"
                         aria-label="Next Page"
                     >
-                        <ChevronRight className="w-4 h-4 text-neutral-600" />
+                        <ChevronRight className="w-4 h-4 text-zinc-600" />
                     </button>
                 </div>
             )}

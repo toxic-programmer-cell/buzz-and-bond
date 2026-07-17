@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
         const formData = await request.formData();
         const file = formData.get("file") as File;
 
-        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
         const ALLOWED_TYPES = [
             "image/jpeg",
@@ -22,15 +22,40 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ message: "no file uploaded" }, { status: 400 });
         }
 
-        if (!ALLOWED_TYPES.includes(file.type) && file.size > MAX_FILE_SIZE) {
+        console.log({
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            sizeMB: (file.size / 1024 / 1024).toFixed(2),
+        });
+
+        // if (!ALLOWED_TYPES.includes(file.type) || file.size > MAX_FILE_SIZE) {
+        //     return NextResponse.json(
+        //         {
+        //             message:
+        //                 "Only JPG, JPEG, PNG, WEBP and GIF images of maximum of 5MB are allowed.",
+        //         },
+        //         {
+        //             status: 400,
+        //         }
+        //     );
+        // }
+
+        if (!ALLOWED_TYPES.includes(file.type)) {
             return NextResponse.json(
                 {
-                    message:
-                        "Only JPG, JPEG, PNG, WEBP and GIF images of maximum of 5MB are allowed.",
+                    message: `Unsupported file type: ${file.type}`,
                 },
+                { status: 400 }
+            );
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
+            return NextResponse.json(
                 {
-                    status: 400,
-                }
+                    message: `File size is ${(file.size / 1024 / 1024).toFixed(2)} MB. Maximum allowed is 5 MB.`,
+                },
+                { status: 400 }
             );
         }
 

@@ -72,7 +72,7 @@ export default function Footer() {
         gsap.to(e.currentTarget, {
             y: 0,
             scaleY: 1.0,
-            color: "#18181b", // neutral-900
+            color: "#a1a1aa", // neutral-600
             duration: 0.5,
             ease: "bounce.out",
         });
@@ -208,7 +208,7 @@ export default function Footer() {
                 </div>
 
                 {/* Giant Brand Name Watermark with spring letter hover animations */}
-                <div className="brand-text text-[8vw] md:text-[10vw] font-black uppercase tracking-tighter text-zinc-900 leading-none select-none text-center mt-12 mb-0 overflow-hidden flex justify-center">
+                <div className="brand-text text-[8vw] md:text-[10vw] font-black uppercase tracking-tighter text-zinc-600 leading-none select-none text-center mt-12 mb-0 overflow-hidden flex justify-center">
                     {brandName.split("").map((char, i) => (
                         <span
                             key={i}

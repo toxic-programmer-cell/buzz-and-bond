@@ -10,9 +10,13 @@ import {
     Menu,
     X,
     ChevronDown,
-    Shield
+    Shield,
+    Bell,
+    Image as ImageIcon,
+    Plus
 } from "lucide-react";
 import Logo from "@/components/layouts/Header/Logo";
+import gsap from "gsap";
 
 interface AdminLayoutClientProps {
     children: React.ReactNode;
@@ -48,6 +52,15 @@ export default function AdminLayoutClient({ children, admin }: AdminLayoutClient
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    // GSAP Page Transition
+    useEffect(() => {
+        gsap.fromTo(
+            ".page-content-wrap",
+            { opacity: 0, y: 15 },
+            { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", clearProps: "all" }
+        );
+    }, [pathname]);
+
     const handleLogout = async () => {
         setIsLoggingOut(true);
         try {
@@ -69,7 +82,7 @@ export default function AdminLayoutClient({ children, admin }: AdminLayoutClient
 
     const navItems = [
         {
-            name: "Dashboard",
+            name: "Overview",
             href: "/admin/dashboard",
             icon: LayoutDashboard,
         },
@@ -77,30 +90,44 @@ export default function AdminLayoutClient({ children, admin }: AdminLayoutClient
             name: "Events",
             href: "/admin/event",
             icon: Calendar,
+            badge: 5
         },
         {
             name: "Gallery",
             href: "/admin/gallery",
-            icon: Calendar,
+            icon: ImageIcon,
+            badge: 12
         },
     ];
 
     return (
-        <div className="min-h-screen bg-zinc-50/50 text-zinc-950 flex font-sans">
-            {/* Sidebar Desktop */}
-            <aside className="hidden md:flex flex-col w-64 text-zinc-400 border-r border-zinc-200 shrink-0 sticky top-0 h-screen shadow-xs">
+        <div className="min-h-screen bg-[#F9F9FB] text-zinc-900 flex font-sans antialiased">
+
+            {/* Sidebar Desktop - Reference Styled */}
+            <aside className="hidden md:flex flex-col w-64 bg-white border-r border-zinc-200/50 shrink-0 sticky top-0 h-screen z-20 overflow-hidden transition-all duration-300">
                 {/* Logo Area */}
-                <div className="h-16 px-6 border-b border-zinc-200 flex items-center justify-between">
-                    <span className="font-accent text-xl italic font-bold tracking-tight text-black flex items-center gap-1.5">
-                        <Logo width={100} height={40} />
-                        <span className="text-[10px] uppercase font-sans tracking-widest bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded font-normal not-italic">
+                <div className="h-20 px-6 flex items-center justify-between bg-white border-b border-zinc-100">
+                    <span className="font-accent text-xl italic font-bold tracking-tight text-black flex items-center gap-2">
+                        <Logo width={90} height={36} />
+                        <span className="text-[9px] uppercase font-sans tracking-widest bg-orange-50 text-orange-600 border border-orange-100 px-2 py-0.5 rounded-full font-bold select-none">
                             Admin
                         </span>
                     </span>
                 </div>
 
+                {/* Reference Styled Floating Amber Action Button */}
+                <div className="px-4 py-6 border-b border-zinc-100">
+                    <Link
+                        href="/admin/event"
+                        className="flex items-center justify-center gap-2 h-12 w-full bg-[#18181b] hover:bg-gradient-to-r from-orange-500 to-amber-500 text-zinc-100 hover:text-white font-bold rounded-2xl shadow-sm hover:shadow transition-all duration-200 text-xs"
+                    >
+                        <Plus className="w-4 h-4 stroke-[2.5]" />
+                        <span>Upload Event</span>
+                    </Link>
+                </div>
+
                 {/* Nav Links */}
-                <nav className="flex-1 px-4 py-6 space-y-1">
+                <nav className="flex-1 px-4 py-4 space-y-1.5 bg-white overflow-y-auto">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = pathname === item.href || (item.href !== "/admin/dashboard" && pathname.startsWith(item.href));
@@ -108,62 +135,98 @@ export default function AdminLayoutClient({ children, admin }: AdminLayoutClient
                             <Link
                                 key={item.name}
                                 href={item.href}
-                                className={`flex items-center gap-3 px-4 h-11 rounded-lg text-sm font-medium transition-colors duration-150 ${isActive
-                                    ? "bg-orange-500/10 text-orange-400 border border-orange-500/20"
-                                    : "text-zinc-400 hover:text-white hover:bg-zinc-900"
+                                className={`flex items-center justify-between px-4 h-11 rounded-2xl text-xs font-bold transition-all duration-200 ${isActive
+                                    ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm"
+                                    : "text-zinc-600 hover:text-zinc-950 hover:bg-zinc-50"
                                     }`}
                             >
-                                <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-orange-400" : "text-zinc-400"}`} />
-                                <span>{item.name}</span>
+                                <div className="flex items-center gap-3">
+                                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-white" : "text-zinc-400"}`} />
+                                    <span>{item.name}</span>
+                                </div>
+                                {item.badge && (
+                                    <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full shrink-0 ${isActive ? "bg-white/20 text-white" : "bg-orange-50 text-orange-600 border border-orange-100/50"}`}>
+                                        {item.badge}
+                                    </span>
+                                )}
                             </Link>
                         );
                     })}
                 </nav>
 
-                {/* Sidebar Footer - Sign Out */}
-                <div className="p-4 border-t border-zinc-200">
-                    <button
-                        onClick={handleLogout}
-                        disabled={isLoggingOut}
-                        className="w-full flex items-center gap-3 px-4 h-11 rounded-lg text-sm font-medium text-zinc-400 hover:text-red-400 hover:bg-red-950/20 transition-all duration-150 disabled:opacity-50 cursor-pointer"
-                    >
-                        <LogOut className="w-4 h-4 shrink-0" />
-                        <span>{isLoggingOut ? "Signing Out..." : "Sign Out"}</span>
-                    </button>
+                {/* Reference Styled Bottom User profile card block */}
+                <div className="bg-zinc-950 text-white p-5 rounded-t-[28px] border-t border-zinc-800/10 flex flex-col gap-4 select-none relative">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center text-xs font-bold text-white uppercase shadow-sm shrink-0 border border-white/20">
+                                {admin.name.charAt(0)}
+                            </div>
+                            <div className="min-w-0">
+                                <p className="text-xs font-bold text-white truncate leading-tight">{admin.name}</p>
+                                <p className="text-[10px] text-zinc-400 truncate mt-0.5 leading-none">Admin</p>
+                            </div>
+                        </div>
+                        <button
+                            ref={profileBtnRef}
+                            onClick={() => setProfileOpen(!profileOpen)}
+                            className="p-1 text-zinc-400 hover:text-white rounded-lg transition-colors cursor-pointer shrink-0"
+                        >
+                            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`} />
+                        </button>
+                    </div>
+
+                    {/* Quick profile actions */}
+                    {profileOpen && (
+                        <div
+                            ref={dropdownRef}
+                            className="absolute bottom-16 left-4 right-4 bg-white text-zinc-900 border border-zinc-100 rounded-2xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-2 duration-200"
+                        >
+                            <div className="p-3 bg-zinc-50 border-b border-zinc-100 text-xs">
+                                <p className="font-bold text-zinc-950 truncate">{admin.name}</p>
+                                <p className="text-[10px] text-zinc-500 truncate mt-0.5">{admin.email}</p>
+                            </div>
+                            <button
+                                onClick={handleLogout}
+                                disabled={isLoggingOut}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors text-left cursor-pointer"
+                            >
+                                <LogOut className="w-4 h-4" />
+                                <span>{isLoggingOut ? "Signing Out..." : "Sign Out"}</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </aside>
 
             {/* Mobile Sidebar Overlay */}
             {sidebarOpen && (
                 <div
-                    className="fixed inset-0 z-40 bg-zinc-950/60 backdrop-blur-sm md:hidden"
+                    className="fixed inset-0 z-40 bg-zinc-950/40 backdrop-blur-sm md:hidden transition-opacity duration-300"
                     onClick={() => setSidebarOpen(false)}
                 />
             )}
 
             {/* Sidebar Mobile */}
             <aside
-                className={`fixed top-0 bottom-0 left-0 z-50 w-64 bg-zinc-950 text-zinc-400 border-r border-zinc-800 flex flex-col transition-transform duration-300 md:hidden ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+                className={`fixed top-0 bottom-0 left-0 z-50 w-64 bg-white border-r border-zinc-200/50 flex flex-col transition-transform duration-300 rounded-r-[24px] md:hidden ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
                     }`}
             >
-                {/* Logo Area */}
-                <div className="h-16 px-6 border-b border-zinc-800 flex items-center justify-between">
-                    <span className="font-accent text-xl italic font-bold tracking-tight text-white flex items-center gap-1.5">
+                <div className="h-16 px-6 border-b border-zinc-100 flex items-center justify-between">
+                    <span className="font-accent text-xl italic font-bold tracking-tight text-black flex items-center gap-2">
                         Times Event
-                        <span className="text-[10px] uppercase font-sans tracking-widest bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded font-normal not-italic">
+                        <span className="text-[9px] uppercase font-sans tracking-widest bg-orange-50 text-orange-600 border border-orange-100 px-2 py-0.5 rounded-full font-bold">
                             Admin
                         </span>
                     </span>
                     <button
                         onClick={() => setSidebarOpen(false)}
-                        className="text-zinc-400 hover:text-white cursor-pointer"
+                        className="p-1.5 text-zinc-400 hover:text-zinc-900 rounded-lg cursor-pointer"
                     >
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
-                {/* Nav Links */}
-                <nav className="flex-1 px-4 py-6 space-y-1">
+                <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = pathname === item.href || (item.href !== "/admin/dashboard" && pathname.startsWith(item.href));
@@ -172,99 +235,55 @@ export default function AdminLayoutClient({ children, admin }: AdminLayoutClient
                                 key={item.name}
                                 href={item.href}
                                 onClick={() => setSidebarOpen(false)}
-                                className={`flex items-center gap-3 px-4 h-11 rounded-lg text-sm font-medium transition-colors duration-150 ${isActive
-                                    ? "bg-orange-500/10 text-orange-400 border border-orange-500/20"
-                                    : "text-zinc-400 hover:text-white hover:bg-zinc-900"
+                                className={`flex items-center gap-3 px-4 h-11 rounded-2xl text-xs font-bold transition-all duration-200 ${isActive
+                                    ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm"
+                                    : "text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50"
                                     }`}
                             >
-                                <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-orange-400" : "text-zinc-400"}`} />
+                                <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-white" : "text-zinc-400"}`} />
                                 <span>{item.name}</span>
                             </Link>
                         );
                     })}
                 </nav>
 
-                {/* Sidebar Footer - Sign Out */}
-                <div className="p-4 border-t border-zinc-800">
+                <div className="bg-zinc-950 text-white p-4 flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center text-xs font-bold text-white uppercase">
+                        {admin.name.charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-white truncate leading-tight">{admin.name}</p>
+                        <p className="text-[10px] text-zinc-400 truncate mt-0.5 leading-none">{admin.email}</p>
+                    </div>
                     <button
                         onClick={handleLogout}
                         disabled={isLoggingOut}
-                        className="w-full flex items-center gap-3 px-4 h-11 rounded-lg text-sm font-medium text-zinc-400 hover:text-red-400 hover:bg-red-950/20 transition-all duration-150 disabled:opacity-50 cursor-pointer"
+                        className="p-2 text-zinc-400 hover:text-white rounded-xl transition-colors cursor-pointer shrink-0 disabled:opacity-50"
                     >
-                        <LogOut className="w-4 h-4 shrink-0" />
-                        <span>{isLoggingOut ? "Signing Out..." : "Sign Out"}</span>
+                        <LogOut className="w-4 h-4" />
                     </button>
                 </div>
             </aside>
 
             {/* Main Area */}
             <div className="flex-1 flex flex-col min-w-0 min-h-screen">
-                {/* Header */}
-                <header className="h-16 bg-white border-b border-zinc-200 px-4 md:px-8 flex items-center justify-between sticky top-0 z-30 shadow-xs">
-                    <div className="flex items-center gap-3">
+                {/* Header for screens without sidebar link titles */}
+                <header className="h-16 md:hidden bg-white/80 backdrop-blur-md border-b border-zinc-200/50 px-4 flex items-center justify-between sticky top-0 z-30 shadow-2-xs">
+                    <div className="flex items-center gap-4">
                         <button
                             onClick={() => setSidebarOpen(true)}
-                            className="md:hidden p-2 -ml-2 text-zinc-500 hover:text-zinc-800 cursor-pointer"
+                            className="p-2 -ml-2 text-zinc-500 hover:text-zinc-900 rounded-xl cursor-pointer"
                         >
                             <Menu className="w-5 h-5" />
                         </button>
-                        <div className="text-xs text-zinc-400 font-medium hidden md:flex items-center gap-1.5 select-none">
-                            <span>Admin</span>
-                            <span className="text-zinc-300">/</span>
-                            <span className="text-zinc-800 font-semibold capitalize">
-                                {pathname === "/admin/dashboard" ? "Dashboard" : pathname.split("/").pop()}
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Profile Dropdown Trigger */}
-                    <div className="relative">
-                        <button
-                            ref={profileBtnRef}
-                            onClick={() => setProfileOpen(!profileOpen)}
-                            className="flex items-center gap-2 h-9 px-3 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 transition-colors duration-150 text-zinc-700 hover:text-zinc-900 cursor-pointer select-none"
-                        >
-                            <div className="w-5 h-5 rounded-full bg-zinc-900 flex items-center justify-center text-[10px] font-bold text-white uppercase">
-                                {admin.name.charAt(0)}
-                            </div>
-                            <span className="text-xs font-semibold hidden sm:inline max-w-[120px] truncate">{admin.name}</span>
-                            <ChevronDown className={`w-3.5 h-3.5 text-zinc-400 transition-transform duration-150 ${profileOpen ? "rotate-180" : ""}`} />
-                        </button>
-
-                        {/* Profile Dropdown */}
-                        {profileOpen && (
-                            <div
-                                ref={dropdownRef}
-                                className="absolute right-0 mt-2 w-64 bg-white border border-zinc-200 rounded-lg shadow-lg overflow-hidden z-50 origin-top-right"
-                            >
-                                <div className="p-4 border-b border-zinc-100 bg-zinc-50/50">
-                                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Signed In As</p>
-                                    <p className="text-sm font-semibold text-zinc-900 mt-1 truncate">{admin.name}</p>
-                                    <p className="text-xs text-zinc-500 truncate mt-0.5">{admin.email}</p>
-                                </div>
-                                <div className="p-2">
-                                    <div className="flex items-center gap-2 px-3 py-1.5 text-xs text-zinc-500">
-                                        <Shield className="w-3.5 h-3.5 text-zinc-400" />
-                                        <span>Role: <strong className="text-zinc-950 font-semibold">{admin.role}</strong></span>
-                                    </div>
-                                </div>
-                                <div className="p-2 border-t border-zinc-100 bg-zinc-50/50">
-                                    <button
-                                        onClick={handleLogout}
-                                        disabled={isLoggingOut}
-                                        className="w-full flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-zinc-700 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors cursor-pointer"
-                                    >
-                                        <LogOut className="w-3.5 h-3.5 text-zinc-400" />
-                                        <span>{isLoggingOut ? "Signing Out..." : "Sign Out"}</span>
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                        <h1 className="text-sm font-bold text-zinc-950 capitalize">
+                            {pathname === "/admin/dashboard" ? "Dashboard" : pathname.split("/").pop()}
+                        </h1>
                     </div>
                 </header>
 
-                {/* Content */}
-                <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+                {/* Main Content Pane - Spacing managed by children */}
+                <main className="flex-1 overflow-y-auto page-content-wrap">
                     {children}
                 </main>
             </div>

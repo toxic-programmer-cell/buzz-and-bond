@@ -4,6 +4,9 @@ import { prisma } from "@/lib/prisma";
 import DashboardUI from "@/components/layouts/AdminDashboard/DashboardUI";
 
 export default async function DashboardPage() {
+    // Artificial delay to inspect the loading animation
+    // await new Promise((resolve) => setTimeout(resolve, 5000));
+
     const cookieStore = await cookies();
     const token = cookieStore.get("bb_session")?.value;
 
