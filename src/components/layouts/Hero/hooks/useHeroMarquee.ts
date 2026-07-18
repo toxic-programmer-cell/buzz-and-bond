@@ -20,7 +20,7 @@ export function useHeroMarquee(
             repeat: -1,
         });
 
-        ScrollTrigger.create({
+        const trigger = ScrollTrigger.create({
             start: 0,
             end: "max",
             onUpdate(self) {
@@ -34,7 +34,7 @@ export function useHeroMarquee(
 
         return () => {
             tween.kill();
-            ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+            trigger.kill();
         };
     }, []);
 }

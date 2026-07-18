@@ -20,8 +20,10 @@ export default function EventGrid({ events = [], loading = false }: EventGridPro
         if (!container) return;
 
         const { scrollLeft, scrollWidth, clientWidth } = container;
-        setShowLeftGlow(scrollLeft > 10);
-        setShowRightGlow(scrollLeft < scrollWidth - clientWidth - 10);
+        const shouldShowLeft = scrollLeft > 10;
+        const shouldShowRight = scrollLeft < scrollWidth - clientWidth - 10;
+        setShowLeftGlow(prev => prev !== shouldShowLeft ? shouldShowLeft : prev);
+        setShowRightGlow(prev => prev !== shouldShowRight ? shouldShowRight : prev);
     };
 
     useEffect(() => {

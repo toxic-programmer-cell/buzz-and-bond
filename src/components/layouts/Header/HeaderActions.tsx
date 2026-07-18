@@ -44,6 +44,7 @@ export default function HeaderActions() {
 
             // 2. Magnetic hover animation for each desktop navigation link
             const items = gsap.utils.toArray<HTMLElement>(".desktop-nav li");
+            const listenerCleanups: (() => void)[] = [];
             items.forEach((item) => {
                 const link = item.querySelector(".nav-link");
                 if (!link) return;
@@ -79,12 +80,13 @@ export default function HeaderActions() {
                 item.addEventListener("mousemove", onMouseMove);
                 item.addEventListener("mouseleave", onMouseLeave);
 
-                // Cleanup listeners on unmount
-                return () => {
-                    item.removeEventListener("mousemove", onMouseMove);
-                    item.removeEventListener("mouseleave", onMouseLeave);
-                };
+                listenerCleanups.push(() => {
+                    item.removeEventListener("mousemove", onMouseMove)
+                    item.removeEventListener("mouseleave", onMouseLeave)
+                })
+
             });
+            return () => listenerCleanups.forEach(c => c())
         },
         { scope: containerRef }
     );

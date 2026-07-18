@@ -80,18 +80,26 @@ export default function AboutHero() {
                     y: 0,
                     opacity: 1,
                     duration: 0.6,
-                    onComplete: () => {
-                        gsap.to(".scroll-indicator", {
-                            y: 8,
-                            repeat: -1,
-                            yoyo: true,
-                            duration: 1.2,
-                            ease: "power1.inOut",
-                        });
-                    },
+                    // onComplete: () => {
+                    //     gsap.to(".scroll-indicator", {
+                    //         y: 8,
+                    //         repeat: -1,
+                    //         yoyo: true,
+                    //         duration: 1.2,
+                    //         ease: "power1.inOut",
+                    //     });
+                    // },
                 },
-                "-=0.2"
+                // "-=0.2"
             );
+
+            gsap.to(".scroll-indicator", {
+                y: 8,
+                repeat: -1,
+                yoyo: true,
+                duration: 1.2,
+                ease: "power1.inOut"
+            })
         },
         { scope: containerRef }
     );
@@ -136,7 +144,7 @@ export default function AboutHero() {
                     ref={textRef}
                     className="mt-8 text-neutral-300 text-sm md:text-lg max-w-xl md:max-w-2xl font-light leading-relaxed px-4 opacity-0"
                 >
-                    Creating an urban playground of meaningful bonds, vibrant community circles, 
+                    Creating an urban playground of meaningful bonds, vibrant community circles,
                     creative workshop collaborations, and premium events where every encounter sparks a memory.
                 </p>
 

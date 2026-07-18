@@ -101,6 +101,8 @@ export default function EventCard({ title, description, image }: EventCardProps)
             return () => {
                 card.removeEventListener("mousemove", onMouseMove);
                 card.removeEventListener("mouseleave", onMouseLeave);
+                gsap.killTweensOf(card);
+                gsap.killTweensOf(glow);
             };
         },
         { scope: cardRef }

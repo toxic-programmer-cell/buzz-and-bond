@@ -216,7 +216,7 @@ export default function AnimatedGallery() {
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [lightboxIndex, gallery.length]);
+    }, [lightboxIndex, gallery.length, gallery]);
 
     // Touch handlers for Lightbox swipe on mobile
     const handleTouchStart = (e: React.TouchEvent) => {

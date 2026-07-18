@@ -118,7 +118,7 @@ export default function MagneticButton({
                     ease: "elastic.out(1, 0.4)",
                     overwrite: true,
                     onComplete: () => {
-                        if (wiggleTween && !isHovered.current && !props.disabled) {
+                        if (wiggleTween && wiggleTween.isActive() && !props.disabled) {
                             wiggleTween.restart();
                         }
                     },

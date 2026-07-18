@@ -54,11 +54,13 @@ export default function AdminLayoutClient({ children, admin }: AdminLayoutClient
 
     // GSAP Page Transition
     useEffect(() => {
-        gsap.fromTo(
+        const tweet = gsap.fromTo(
             ".page-content-wrap",
             { opacity: 0, y: 15 },
             { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", clearProps: "all" }
         );
+
+        return () => { tweet.kill() }
     }, [pathname]);
 
     const handleLogout = async () => {

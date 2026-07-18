@@ -76,7 +76,7 @@ export default function Event() {
     };
 
     // Coordinate calculation and scroll binding
-    useGSAP(
+    const { contextSafe } = useGSAP(
         () => {
             const wheel = wheelRef.current;
             const cards = cardRefs.current.filter(Boolean);
@@ -138,7 +138,6 @@ export default function Event() {
     );
 
     // FLIP animation trigger on activeCardIndex change
-    // FLIP animation trigger on activeCardIndex change
     useGSAP(
         () => {
             if (activeCardIndex !== null && pendingFlipState.current) {
@@ -170,7 +169,7 @@ export default function Event() {
         { dependencies: [activeCardIndex], scope: sectionRef }
     );
 
-    const handleMouseEnter = (index: number, e: React.MouseEvent<HTMLDivElement>) => {
+    const handleMouseEnter = contextSafe((index: number, e: React.MouseEvent<HTMLDivElement>) => {
         if (activeCardIndex !== null) return;
         setHoveredCardIndex(index);
 
@@ -198,7 +197,7 @@ export default function Event() {
                 overwrite: "auto",
             });
         }
-    };
+    });
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         if (activeCardIndex !== null) return;

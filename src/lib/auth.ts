@@ -1,6 +1,19 @@
 import { JWTPayload, jwtVerify, SignJWT } from "jose"
 
-const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+function getJWtSecret(): Uint8Array {
+    const secret = process.env.JWT_SECRET;
+
+    if (!secret) {
+        throw new Error("JWT_SECRET environment variable is missing. Authentication cannot start.")
+    }
+
+    if (secret.length < 32) {
+        throw new Error("JWT_SECRET must be at least 32 characters long.")
+    }
+
+    return new TextEncoder().encode(secret)
+
+}
 
 export interface SessionPayload extends JWTPayload {
     id: string
@@ -15,11 +28,16 @@ export async function createToken(payload: SessionPayload) {
         })
         .setIssuedAt()
         .setExpirationTime("7d")
-        .sign(secret)
+        .sign(getJWtSecret())
 }
 
 export async function verifyToken(token: string) {
-    const { payload } = await jwtVerify(token, secret)
+    try {
+        const { payload } = await jwtVerify(token, getJWtSecret())
+        return payload as SessionPayload;
+    } catch (error) {
+        console.log("Error in verifying token:", error);
+        return null;
+    }
 
-    return payload as SessionPayload;
 }

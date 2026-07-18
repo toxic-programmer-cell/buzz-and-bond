@@ -5,8 +5,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { ArrowUp, Mail } from "lucide-react";
-import { Button } from "@/components/ui";
-import Image from "next/image";
 import Logo from "../Header/Logo";
 import Link from "next/link";
 
@@ -16,49 +14,59 @@ export default function Footer() {
     const footerRef = useRef<HTMLDivElement>(null);
     const brandName = "BUZZ & BOND";
 
-    useGSAP(
+    const { contextSafe } = useGSAP(
         () => {
             const footer = footerRef.current;
             if (!footer) return;
+            const footerItem = footer.querySelectorAll(".footer-item")
+            const brandChar = footer.querySelectorAll(".brand-char")
+            const brandText = footer.querySelectorAll(".brand-text")
 
             // Fade in and slide up footer elements in sequence
-            gsap.fromTo(
-                footer.querySelectorAll(".footer-item"),
-                { opacity: 0, y: 30, },
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.8,
-                    stagger: 0.08,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: footer,
-                        start: "top 92%",
+            if (footerItem) {
+                gsap.fromTo(
+                    footerItem,
+                    { opacity: 0, y: 30, },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        stagger: 0.08,
+                        ease: "power3.out",
+                        scrollTrigger: {
+                            trigger: footer,
+                            start: "top 90%",
+                            // markers: true,
+                        },
                     },
-                },
-            );
+                );
+            }
+
 
             // Stagger letter spring wave for the giant brand watermark text
-            gsap.fromTo(
-                footer.querySelectorAll(".brand-char"),
-                { yPercent: 100, opacity: 0 },
-                {
-                    yPercent: 0,
-                    opacity: 1,
-                    duration: 1.2,
-                    stagger: 0.04,
-                    ease: "back.out(1.5)",
-                    scrollTrigger: {
-                        trigger: footer.querySelector(".brand-text"),
-                        start: "top 95%",
-                    },
-                }
-            );
+            if (brandChar) {
+                gsap.fromTo(
+                    brandChar,
+                    { yPercent: 100, opacity: 0 },
+                    {
+                        yPercent: 0,
+                        opacity: 1,
+                        duration: 1.2,
+                        stagger: 0.04,
+                        ease: "back.out(1.5)",
+                        scrollTrigger: {
+                            trigger: brandText,
+                            start: "top 95%",
+                        },
+                    }
+                );
+            }
+
         },
         { scope: footerRef }
     );
 
-    const handleCharMouseEnter = (e: React.MouseEvent<HTMLSpanElement>) => {
+    const handleCharMouseEnter = contextSafe((e: React.MouseEvent<HTMLSpanElement>) => {
         gsap.to(e.currentTarget, {
             y: -20,
             scaleY: 1.15,
@@ -66,9 +74,9 @@ export default function Footer() {
             duration: 0.25,
             ease: "power2.out",
         });
-    };
+    });
 
-    const handleCharMouseLeave = (e: React.MouseEvent<HTMLSpanElement>) => {
+    const handleCharMouseLeave = contextSafe((e: React.MouseEvent<HTMLSpanElement>) => {
         gsap.to(e.currentTarget, {
             y: 0,
             scaleY: 1.0,
@@ -76,7 +84,7 @@ export default function Footer() {
             duration: 0.5,
             ease: "bounce.out",
         });
-    };
+    });
 
     const scrollToTop = () => {
         window.scrollTo({
