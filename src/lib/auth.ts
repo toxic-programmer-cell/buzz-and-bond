@@ -31,7 +31,7 @@ export async function createToken(payload: SessionPayload) {
         .sign(getJWtSecret())
 }
 
-export async function verifyToken(token: string) {
+export async function verifyToken(token: string): Promise<SessionPayload | null> {
     try {
         const { payload } = await jwtVerify(token, getJWtSecret())
         return payload as SessionPayload;

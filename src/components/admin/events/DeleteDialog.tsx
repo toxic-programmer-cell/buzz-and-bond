@@ -1,13 +1,14 @@
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 
 interface Props {
     open: boolean;
     title: string;
     onCancel: () => void;
     onConfirm: () => void;
+    isDeleting: boolean;
 }
 
-export default function DeleteDialog({ open, title, onCancel, onConfirm }: Props) {
+export default function DeleteDialog({ open, title, onCancel, onConfirm, isDeleting }: Props) {
     if (!open) return null;
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -57,7 +58,11 @@ export default function DeleteDialog({ open, title, onCancel, onConfirm }: Props
 
                     <button
                         onClick={onConfirm}
+                        disabled={isDeleting}
                         className="
+                            inline-flex 
+                            items-center 
+                            gap-2
                             rounded-xl
                             bg-red-600
                             hover:bg-red-700
@@ -71,9 +76,17 @@ export default function DeleteDialog({ open, title, onCancel, onConfirm }: Props
                             transition-all
                             active:translate-y-[1px]
                             cursor-pointer
+                            disabled:opacity-50
+                            disabled:cursor-not-allowed
                         "
                     >
-                        Delete Event
+                        {isDeleting ?
+                            <>
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                <span>Deleting...</span>
+                            </> :
+                            <span>Delete Event</span>
+                        }
                     </button>
                 </div>
             </div>

@@ -10,13 +10,12 @@ import {
     Menu,
     X,
     ChevronDown,
-    Shield,
-    Bell,
     Image as ImageIcon,
     Plus
 } from "lucide-react";
 import Logo from "@/components/layouts/Header/Logo";
 import gsap from "gsap";
+import useEvents from "@/components/admin/events/hooks/useEvents";
 
 interface AdminLayoutClientProps {
     children: React.ReactNode;
@@ -35,6 +34,8 @@ export default function AdminLayoutClient({ children, admin }: AdminLayoutClient
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const profileBtnRef = useRef<HTMLButtonElement>(null);
+
+    const { events } = useEvents()
 
     // Close dropdown on click outside
     useEffect(() => {
@@ -92,13 +93,12 @@ export default function AdminLayoutClient({ children, admin }: AdminLayoutClient
             name: "Events",
             href: "/admin/event",
             icon: Calendar,
-            badge: 5
+            badge: events.length,
         },
         {
             name: "Gallery",
             href: "/admin/gallery",
             icon: ImageIcon,
-            badge: 12
         },
     ];
 

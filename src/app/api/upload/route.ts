@@ -1,10 +1,16 @@
 
+import { AuthenticationError, verifyApiSession } from "@/lib/api-session";
 import cloudinary from "@/lib/cloudinary";
 import { UploadApiResponse } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
     try {
+        const session = await verifyApiSession();
+        if (session.role !== 'ADMIN') {
+            return NextResponse.json({ success: false, message: "Unauthorized access" }, { status: 403 })
+        }
+
         const formData = await request.formData();
         const file = formData.get("file") as File;
 
@@ -21,25 +27,6 @@ export async function POST(request: NextRequest) {
         if (!file) {
             return NextResponse.json({ message: "no file uploaded" }, { status: 400 });
         }
-
-        console.log({
-            name: file.name,
-            type: file.type,
-            size: file.size,
-            sizeMB: (file.size / 1024 / 1024).toFixed(2),
-        });
-
-        // if (!ALLOWED_TYPES.includes(file.type) || file.size > MAX_FILE_SIZE) {
-        //     return NextResponse.json(
-        //         {
-        //             message:
-        //                 "Only JPG, JPEG, PNG, WEBP and GIF images of maximum of 5MB are allowed.",
-        //         },
-        //         {
-        //             status: 400,
-        //         }
-        //     );
-        // }
 
         if (!ALLOWED_TYPES.includes(file.type)) {
             return NextResponse.json(
@@ -83,7 +70,10 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ url: result.secure_url, publicId: result.public_id })
     } catch (error) {
-        console.error(error);
+        if (error instanceof AuthenticationError) {
+            return NextResponse.json({ message: error.message })
+        }
+
 
         return NextResponse.json(
             {

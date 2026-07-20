@@ -67,7 +67,6 @@ export default function EventForm({ onClose, event }: Props) {
             const data = await response.json();
 
             if (!response.ok) {
-                console.log(data.message);
                 return;
             }
 

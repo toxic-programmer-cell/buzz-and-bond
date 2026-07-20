@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GalleryService } from "@/services/gallery.services";
 import { GallerySchema } from "@/validations/gallery.schema";
+import { AuthenticationError, verifyApiSession } from "@/lib/api-session";
+import { success } from "zod";
 
 const service = new GalleryService();
 
@@ -9,6 +11,12 @@ export async function PATCH(
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+
+        const session = await verifyApiSession();
+
+        if (session.role !== 'ADMIN') {
+            return NextResponse.json({ success: false, message: "You do not have access to this feature" }, { status: 403 })
+        }
 
         const { id } = await params;
 
@@ -22,7 +30,9 @@ export async function PATCH(
 
     } catch (error) {
 
-        console.error(error);
+        if (error instanceof AuthenticationError) {
+            return NextResponse.json({ message: error.message })
+        }
 
         return NextResponse.json(
             { message: "Unable to update image." },
@@ -31,12 +41,19 @@ export async function PATCH(
     }
 }
 
+
 export async function DELETE(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
 
     try {
+
+        const session = await verifyApiSession();
+
+        if (session.role !== "ADMIN") {
+            return NextResponse.json({ success: false, message: "You do not have access to this feature" }, { status: 403 })
+        }
 
         const { id } = await params;
 
@@ -49,7 +66,9 @@ export async function DELETE(
 
     } catch (error) {
 
-        console.error(error);
+        if (error instanceof AuthenticationError) {
+            return NextResponse.json({ message: error.message })
+        }
 
         return NextResponse.json(
             {

@@ -23,6 +23,18 @@ export async function GET() {
 
         const payload = await verifyToken(token);
 
+        if (!payload) {
+            return NextResponse.json(
+                {
+                    message: "Invalid Token",
+                    authenticated: false,
+                },
+                {
+                    status: 401,
+                }
+            )
+        }
+
         const admin = await prisma.admin.findUnique({
             where: {
                 id: payload.id,

@@ -17,13 +17,17 @@ export default async function AdminLayout({
     }
 
     let admin = {
-        name: "Buzz & Bond Admin",
-        email: "admin@buzzandbond.com",
-        role: "ADMIN",
+        name: "",
+        email: "",
+        role: "",
     };
 
     try {
         const payload = await verifyToken(token);
+
+        if (!payload) {
+            redirect("/login")
+        }
 
         const dbAdmin = await prisma.admin.findUnique({
             where: { id: payload.id },

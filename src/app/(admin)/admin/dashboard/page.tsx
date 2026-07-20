@@ -11,24 +11,26 @@ export default async function DashboardPage() {
     const token = cookieStore.get("bb_session")?.value;
 
     let admin = {
-        name: "Buzz & Bond Admin",
-        email: "admin@buzzandbond.com",
-        role: "ADMIN"
+        name: "",
+        email: "",
+        role: ""
     };
 
     try {
         if (token) {
             const payload = await verifyToken(token);
-            const dbAdmin = await prisma.admin.findUnique({
-                where: { id: payload.id },
-                select: { name: true, email: true, role: true }
-            });
-            if (dbAdmin) {
-                admin = {
-                    name: dbAdmin.name,
-                    email: dbAdmin.email,
-                    role: dbAdmin.role
-                };
+            if (payload) {
+                const dbAdmin = await prisma.admin.findUnique({
+                    where: { id: payload.id },
+                    select: { name: true, email: true, role: true }
+                });
+                if (dbAdmin) {
+                    admin = {
+                        name: dbAdmin.name,
+                        email: dbAdmin.email,
+                        role: dbAdmin.role
+                    };
+                }
             }
         }
     } catch (e) {

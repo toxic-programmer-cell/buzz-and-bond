@@ -4,16 +4,19 @@ import { DeleteDialog, EventForm, EventHeader, EventList, EventModal } from "@/c
 import { useState } from "react";
 import { Event } from "@/components/admin/events/types";
 import useEvents from "@/components/admin/events/hooks/useEvents";
-import { Loader2, MessageSquare } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function EventPage() {
     const { events, loading, fetchEvents } = useEvents();
     const [open, setOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false)
 
     async function deleteEvent() {
         if (!selectedEvent) return;
+
+        setIsDeleting(true)
 
         const res = await fetch(`/api/event/${selectedEvent.id}`, { method: "DELETE" });
 
@@ -25,6 +28,7 @@ export default function EventPage() {
         setDeleteOpen(false);
         setSelectedEvent(null);
         fetchEvents();
+        setIsDeleting(false)
     }
 
     if (loading) {
@@ -215,6 +219,7 @@ export default function EventPage() {
                 title={selectedEvent?.title || ""}
                 onCancel={() => setDeleteOpen(false)}
                 onConfirm={deleteEvent}
+                isDeleting={isDeleting}
             />
         </div>
     );
